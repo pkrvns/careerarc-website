@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     template: "%s | CareerArc",
   },
   description:
-    "CareerArc is the official career counselling wing of Purwanchal Educational Trust. ARC-T 2.0 Recognition & Guidance Day — 25-26 April 2026, BITE Campus, Varanasi.",
+    "CareerArc — Career guidance for every student. ARC-T 2.0 Recognition & Guidance Day — 25-26 April 2026, BITE Campus, Varanasi.",
   metadataBase: new URL("https://careerarc.academy"),
   openGraph: {
     type: "website",
@@ -37,8 +37,14 @@ export const metadata: Metadata = {
   },
   robots: { index: true, follow: true },
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+    ],
+    apple: "/apple-icon.png",
   },
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
