@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { PHONE_NUMBERS, SOCIAL_LINKS } from "@/lib/constants";
 
 export function Footer() {
@@ -121,9 +122,29 @@ export function Footer() {
 
         </div>
 
-        {/* Bottom Bar */}
-        <div className="mx-auto mt-10 max-w-[1200px] border-t border-brown pt-6 text-center text-xs text-tan">
-          &copy; 2026 CareerArc. Technology Partner: Sort String Solutions LLP
+        {/* Technology Partner */}
+        <div className="mx-auto mt-10 max-w-[1200px] border-t border-brown pt-6">
+          <div className="flex flex-col items-center gap-3">
+            <p className="text-xs uppercase tracking-wider text-tan/60">
+              Technology Partner
+            </p>
+            <a
+              href="https://sortstring.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Image
+                src="/logos/sortstring-logo-white.png"
+                alt="Sort String Solutions LLP"
+                width={160}
+                height={40}
+                className="h-8 w-auto opacity-80 transition-opacity hover:opacity-100"
+              />
+            </a>
+          </div>
+          <p className="mt-4 text-center text-xs text-tan/50">
+            &copy; 2026 CareerArc. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>

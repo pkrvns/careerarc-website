@@ -89,9 +89,41 @@ export default function AboutPage() {
               </div>
             ))}
           </div>
-          <p className="mt-6 text-center text-sm text-muted">
-            Technology Partner: Sort String Solutions LLP
+        </div>
+      </section>
+
+      {/* Technology Partner */}
+      <section className="bg-white px-4 py-16 md:py-20">
+        <div className="mx-auto max-w-[600px] text-center">
+          <p className="mb-4 text-xs uppercase tracking-wider text-muted">
+            Technology Partner
           </p>
+          <a
+            href="https://sortstring.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Image
+              src="/logos/sortstring-logo.png"
+              alt="Sort String Solutions LLP"
+              width={220}
+              height={60}
+              className="mx-auto mb-4 h-12 w-auto"
+            />
+          </a>
+          <p className="text-sm text-body">
+            Sort String Solutions LLP is our technology partner, powering the
+            CareerArc website, registration system, and event management
+            platform.
+          </p>
+          <a
+            href="https://sortstring.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 inline-block text-sm text-gold transition-colors hover:text-gold-dark"
+          >
+            sortstring.com &rarr;
+          </a>
         </div>
       </section>
     </>
