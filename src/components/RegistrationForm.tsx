@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 type FormData = {
   fullName: string;
   mobile: string;
-  otp: string;
   institution: string;
   classYear: string;
   preferredDate: string;
@@ -37,10 +36,10 @@ const institutions = [
 ];
 
 export function RegistrationForm() {
-  const [otpSent, setOtpSent] = useState(false);
-  const [otpVerified, setOtpVerified] = useState(false);
-  const [sending, setSending] = useState(false);
+  const [registered, setRegistered] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [serverError, setServerError] = useState("");
+  const [allocatedDate, setAllocatedDate] = useState("");
 
   const {
     register,
@@ -53,23 +52,30 @@ export function RegistrationForm() {
 
   const parentAttending = watch("parentAttending");
 
-  const sendOtp = async () => {
-    setSending(true);
-    // TODO: Call Sort String Solutions API to send OTP
-    await new Promise((r) => setTimeout(r, 1500));
-    setOtpSent(true);
-    setSending(false);
-  };
-
   const onSubmit = async (data: FormData) => {
     setSubmitting(true);
-    // TODO: Verify OTP + submit registration to Sort String API
-    await new Promise((r) => setTimeout(r, 2000));
-    setOtpVerified(true);
-    setSubmitting(false);
+    setServerError("");
+    try {
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const result = await res.json();
+      if (!res.ok) {
+        setServerError(result.error || "Something went wrong");
+        return;
+      }
+      setAllocatedDate(data.preferredDate === "day1" ? "Day 1 (25 April)" : "Day 2 (26 April)");
+      setRegistered(true);
+    } catch {
+      setServerError("Network error. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  if (otpVerified) {
+  if (registered) {
     return (
       <div className="rounded-xl border border-gold/20 bg-white p-8 text-center">
         <div className="mb-4 text-5xl">🎉</div>
@@ -77,7 +83,7 @@ export function RegistrationForm() {
           You&apos;re registered!
         </h2>
         <p className="mb-4 text-sm text-body">
-          Your date: <strong>Day 1 (25 April)</strong>. Save this page or take a
+          Your date: <strong>{allocatedDate}</strong>. Save this page or take a
           screenshot.
         </p>
         <div className="mb-6 rounded-lg bg-cream p-4">
@@ -125,65 +131,29 @@ export function RegistrationForm() {
         )}
       </div>
 
-      {/* Mobile Number + OTP */}
+      {/* Mobile Number */}
       <div className="mb-5">
         <label className="mb-1.5 block text-sm font-medium text-chocolate">
           Mobile Number <span className="text-coral">*</span>
         </label>
-        <div className="flex gap-2">
-          <input
-            {...register("mobile", {
-              required: "Mobile number is required",
-              pattern: {
-                value: /^[6-9]\d{9}$/,
-                message: "Enter a valid 10-digit mobile number",
-              },
-            })}
-            type="tel"
-            inputMode="numeric"
-            placeholder="10-digit number"
-            maxLength={10}
-            className="flex-1 rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-chocolate outline-none transition-colors focus:border-gold focus:ring-1 focus:ring-gold"
-          />
-          <button
-            type="button"
-            onClick={sendOtp}
-            disabled={sending || otpSent}
-            className="shrink-0 rounded-lg bg-gold px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-gold-dark disabled:opacity-50"
-          >
-            {sending ? "Sending..." : otpSent ? "Sent ✓" : "Send OTP"}
-          </button>
-        </div>
+        <input
+          {...register("mobile", {
+            required: "Mobile number is required",
+            pattern: {
+              value: /^[6-9]\d{9}$/,
+              message: "Enter a valid 10-digit mobile number",
+            },
+          })}
+          type="tel"
+          inputMode="numeric"
+          placeholder="10-digit number"
+          maxLength={10}
+          className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-chocolate outline-none transition-colors focus:border-gold focus:ring-1 focus:ring-gold"
+        />
         {errors.mobile && (
           <p className="mt-1 text-xs text-red-500">{errors.mobile.message}</p>
         )}
       </div>
-
-      {/* OTP Field */}
-      {otpSent && (
-        <div className="mb-5">
-          <label className="mb-1.5 block text-sm font-medium text-chocolate">
-            Enter OTP <span className="text-coral">*</span>
-          </label>
-          <input
-            {...register("otp", {
-              required: "OTP is required",
-            })}
-            type="text"
-            inputMode="numeric"
-            placeholder="Enter OTP"
-            maxLength={6}
-            autoFocus
-            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-chocolate outline-none transition-colors focus:border-gold focus:ring-1 focus:ring-gold"
-          />
-          {errors.otp && (
-            <p className="mt-1 text-xs text-red-500">{errors.otp.message}</p>
-          )}
-          <p className="mt-1 text-xs text-muted">
-            Didn&apos;t receive? Wait 60 seconds before resending.
-          </p>
-        </div>
-      )}
 
       {/* Institution */}
       <div className="mb-5">
@@ -297,15 +267,20 @@ export function RegistrationForm() {
         </div>
       )}
 
+      {/* Server Error */}
+      {serverError && (
+        <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600">
+          {serverError}
+        </div>
+      )}
+
       {/* Submit */}
       <button
         type="submit"
         disabled={submitting}
         className="mt-2 w-full rounded-lg bg-coral py-3.5 text-base font-medium text-white transition-colors hover:bg-coral-dark disabled:opacity-50"
       >
-        {submitting
-          ? "Submitting..."
-          : "Register for Free — Confirm via OTP"}
+        {submitting ? "Registering..." : "Register for Free"}
       </button>
 
       <p className="mt-4 text-center text-xs text-muted">
