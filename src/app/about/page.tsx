@@ -5,7 +5,7 @@ import { LEADERSHIP } from "@/lib/constants";
 export const metadata: Metadata = {
   title: "About CareerArc",
   description:
-    "CareerArc is the official career counselling wing of Purwanchal Educational Trust, empowering students in Varanasi and eastern UP.",
+    "CareerArc is a career counselling initiative empowering students in Varanasi and eastern UP with guidance, confidence, and direction.",
 };
 
 export default function AboutPage() {
@@ -18,11 +18,11 @@ export default function AboutPage() {
             About CareerArc
           </h1>
           <p className="mb-4 leading-relaxed text-body">
-            Launched in 2025, CareerArc is the official career counselling wing
-            of Purwanchal Educational Trust. We exist to bridge the gap between
-            education and employment &mdash; especially for students from rural
-            and underprivileged backgrounds in Varanasi and eastern Uttar
-            Pradesh.
+            Launched in 2025, CareerArc is a career counselling initiative that
+            empowers students &mdash; especially from rural and underprivileged
+            backgrounds in Varanasi and eastern Uttar Pradesh &mdash; with the
+            knowledge, confidence, and direction they need to choose the right
+            career path.
           </p>
           <p className="leading-relaxed text-body">
             We believe every student deserves access to honest, unbiased career
@@ -37,29 +37,30 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Purwanchal Educational Trust */}
+      {/* Venue */}
       <section className="bg-white px-4 py-16 md:py-20">
         <div className="mx-auto max-w-[800px] text-center">
-          <Image
-            src="/logos/pet-logo.svg"
-            alt="Purwanchal Educational Trust"
-            width={140}
-            height={140}
-            className="mx-auto mb-4 h-28 w-auto"
-          />
-          <h2 className="mb-4 text-2xl font-semibold text-chocolate md:text-[32px]">
-            Purwanchal Educational Trust
+          <h2 className="mb-6 text-2xl font-semibold text-chocolate md:text-[32px]">
+            Event Venue
           </h2>
-          <p className="mb-2 text-sm font-medium text-gold">
-            Established 2nd November 2000
-          </p>
-          <p className="leading-relaxed text-body">
-            Founded by visionary social reformer <strong>Late Kalika Rai</strong>,
-            the trust was born from a belief that quality education should be
-            accessible to all, regardless of economic background. Today, it
-            operates three institutions: BITE (est. 2003), BIPE, and BIP
-            (D.Pharm).
-          </p>
+          <div className="rounded-xl border border-gold/20 bg-ivory p-8">
+            <Image
+              src="/logos/bite-logo.svg"
+              alt="BITE"
+              width={100}
+              height={100}
+              className="mx-auto mb-4 h-20 w-auto"
+            />
+            <h3 className="mb-2 text-xl font-semibold text-chocolate">
+              BITE Campus
+            </h3>
+            <p className="mb-1 font-serif text-sm italic text-gold">
+              Banaras Institute of Teacher&apos;s Education
+            </p>
+            <p className="text-sm text-body">
+              Babatpur, Varanasi 221204, Uttar Pradesh
+            </p>
+          </div>
         </div>
       </section>
 
@@ -67,7 +68,7 @@ export default function AboutPage() {
       <section className="bg-ivory px-4 py-16 md:py-20">
         <div className="mx-auto max-w-[1200px]">
           <h2 className="mb-8 text-center text-2xl font-semibold text-chocolate md:text-[32px]">
-            Leadership
+            Team
           </h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {LEADERSHIP.map((person) => (
@@ -75,7 +76,6 @@ export default function AboutPage() {
                 key={person.name}
                 className="flex items-center gap-4 rounded-xl border border-gold/20 bg-white p-5"
               >
-                {/* Initials circle */}
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gold/10 text-sm font-semibold text-gold">
                   {person.initials}
                 </div>
@@ -90,7 +90,7 @@ export default function AboutPage() {
             ))}
           </div>
           <p className="mt-6 text-center text-sm text-muted">
-            Technology Partner: Sort String Solutions LLP (Abhishek Mishra, CTO)
+            Technology Partner: Sort String Solutions LLP
           </p>
         </div>
       </section>

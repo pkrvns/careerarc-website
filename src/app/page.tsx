@@ -139,84 +139,47 @@ export default function Home() {
           <h2 className="mb-8 text-center text-2xl font-semibold text-chocolate md:text-[32px]">
             Your 3.5-Hour Journey
           </h2>
-          <div className="relative">
-            {/* Vertical timeline line */}
-            <div className="absolute left-[60px] top-0 bottom-0 w-px border-l-2 border-dashed border-gold/40 md:left-[80px]" />
-            <div className="space-y-6">
-              {SCHEDULE.map((item, i) => (
-                <div key={i} className="relative flex gap-4 pl-0 md:gap-6">
-                  <div className="w-[60px] shrink-0 pt-1 text-right text-sm font-semibold text-gold md:w-[80px]">
-                    {item.time}
-                  </div>
-                  <div className="relative pt-1">
-                    {/* Dot */}
-                    <div className="absolute -left-[13px] top-2 h-3 w-3 rounded-full border-2 border-gold bg-ivory md:-left-[15px]" />
-                    <div className="font-semibold text-chocolate">
-                      {item.title}
-                    </div>
-                    <div className="text-sm text-muted">{item.desc}</div>
-                  </div>
+          <div className="space-y-5">
+            {SCHEDULE.map((item, i) => (
+              <div key={i} className="flex items-start gap-3 md:gap-4">
+                <div className="w-[70px] shrink-0 rounded-lg bg-gold/10 px-2 py-1.5 text-center text-xs font-semibold text-gold md:w-[80px] md:text-sm">
+                  {item.time}
                 </div>
-              ))}
-            </div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-[15px] font-semibold text-chocolate">
+                    {item.title}
+                  </div>
+                  <div className="text-sm text-muted">{item.desc}</div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Trust Section */}
+      {/* Venue Section */}
       <section className="bg-white px-4 py-16 md:py-20">
-        <div className="mx-auto max-w-[1200px] text-center">
+        <div className="mx-auto max-w-[800px] text-center">
           <h2 className="mb-6 text-2xl font-semibold text-chocolate md:text-[32px]">
-            Backed by Legacy
+            Event Venue
           </h2>
-          <div className="mx-auto mb-8 max-w-md">
+          <div className="rounded-xl border border-gold/20 bg-ivory p-8">
             <Image
-              src="/logos/pet-logo.svg"
-              alt="Purwanchal Educational Trust"
-              width={120}
-              height={120}
-              className="mx-auto mb-3 h-24 w-auto"
+              src="/logos/bite-logo.svg"
+              alt="BITE"
+              width={80}
+              height={80}
+              className="mx-auto mb-4 h-16 w-auto"
             />
-            <p className="text-sm text-brown">
-              Purwanchal Educational Trust &mdash; Est. 2000. Founded by
-              visionary social reformer Late Kalika Rai. Operating BITE (est.
-              2003), BIPE, and BIP. CareerArc launched 2025 as the career
-              counselling wing.
+            <h3 className="mb-2 text-xl font-semibold text-chocolate">
+              BITE Campus
+            </h3>
+            <p className="mb-1 font-serif text-sm italic text-gold">
+              Banaras Institute of Teacher&apos;s Education
             </p>
-          </div>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
-            {[
-              {
-                logo: "/logos/pet-logo.svg",
-                name: "BITE",
-                tagline: "Banaras Institute of Teacher's Education",
-              },
-              {
-                logo: "/logos/bipe-logo.svg",
-                name: "BIPE",
-                tagline: "Banaras Institute of Professional Education",
-              },
-              {
-                logo: "/logos/pharmacy-logo.svg",
-                name: "BIP",
-                tagline: "Banaras Institute of Pharmacy",
-              },
-            ].map((inst) => (
-              <div
-                key={inst.name}
-                className="rounded-xl border border-gold/20 bg-white p-6"
-              >
-                <Image
-                  src={inst.logo}
-                  alt={inst.name}
-                  width={60}
-                  height={60}
-                  className="mx-auto mb-3 h-14 w-auto"
-                />
-                <div className="font-semibold text-chocolate">{inst.name}</div>
-                <div className="text-xs text-muted">{inst.tagline}</div>
-              </div>
-            ))}
+            <p className="text-sm text-body">
+              Babatpur, Varanasi 221204, Uttar Pradesh
+            </p>
           </div>
         </div>
       </section>

@@ -107,24 +107,20 @@ export default function ArctPage() {
           <h2 className="mb-8 text-center text-2xl font-semibold text-chocolate md:text-[32px]">
             Event Schedule
           </h2>
-          <div className="relative">
-            <div className="absolute left-[60px] top-0 bottom-0 w-px border-l-2 border-dashed border-gold/40 md:left-[80px]" />
-            <div className="space-y-6">
-              {SCHEDULE.map((item, i) => (
-                <div key={i} className="relative flex gap-4 md:gap-6">
-                  <div className="w-[60px] shrink-0 pt-1 text-right text-sm font-semibold text-gold md:w-[80px]">
-                    {item.time}
-                  </div>
-                  <div className="relative pt-1">
-                    <div className="absolute -left-[13px] top-2 h-3 w-3 rounded-full border-2 border-gold bg-white md:-left-[15px]" />
-                    <div className="font-semibold text-chocolate">
-                      {item.title}
-                    </div>
-                    <div className="text-sm text-muted">{item.desc}</div>
-                  </div>
+          <div className="space-y-5">
+            {SCHEDULE.map((item, i) => (
+              <div key={i} className="flex items-start gap-3 md:gap-4">
+                <div className="w-[70px] shrink-0 rounded-lg bg-gold/10 px-2 py-1.5 text-center text-xs font-semibold text-gold md:w-[80px] md:text-sm">
+                  {item.time}
                 </div>
-              ))}
-            </div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-[15px] font-semibold text-chocolate">
+                    {item.title}
+                  </div>
+                  <div className="text-sm text-muted">{item.desc}</div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>

@@ -30,14 +30,14 @@ export function Footer() {
 
       {/* Main Footer */}
       <div className="bg-chocolate px-4 py-12 text-tan">
-        <div className="mx-auto grid max-w-[1200px] gap-8 md:grid-cols-[2fr_1fr_1fr]">
+        <div className="mx-auto grid max-w-[1200px] gap-8 md:grid-cols-[2fr_1fr]">
           {/* Column 1 */}
           <div>
             <h3 className="mb-1 text-lg font-semibold text-gold-light">
               CareerArc
             </h3>
             <p className="mb-3 text-sm text-tan">
-              A unit of Purwanchal Educational Trust
+              Career Guidance for Every Student
             </p>
             <p className="mb-4 text-sm text-tan">
               Babatpur, Varanasi 221204
@@ -119,56 +119,11 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Column 3 — Institutions */}
-          <div>
-            <h3 className="mb-3 text-sm font-medium uppercase tracking-wider text-gold-light">
-              Institutions
-            </h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <a
-                  href="https://bitevns.ac.in"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-tan transition-colors hover:text-gold-light"
-                >
-                  BITE
-                </a>
-              </li>
-              <li>
-                <Link
-                  href="/institutions"
-                  className="text-tan transition-colors hover:text-gold-light"
-                >
-                  BIPE
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/institutions"
-                  className="text-tan transition-colors hover:text-gold-light"
-                >
-                  BIP (D.Pharm)
-                </Link>
-              </li>
-              <li>
-                <a
-                  href="https://bitevns.ac.in"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-tan transition-colors hover:text-gold-light"
-                >
-                  bitevns.ac.in
-                </a>
-              </li>
-            </ul>
-          </div>
         </div>
 
         {/* Bottom Bar */}
         <div className="mx-auto mt-10 max-w-[1200px] border-t border-brown pt-6 text-center text-xs text-tan">
-          &copy; 2026 CareerArc &mdash; Purwanchal Educational Trust. Technology
-          Partner: Sort String Solutions LLP
+          &copy; 2026 CareerArc. Technology Partner: Sort String Solutions LLP
         </div>
       </div>
     </footer>
