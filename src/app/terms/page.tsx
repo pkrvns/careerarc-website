@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Terms & Conditions",
-  description: "Terms and Conditions for CareerArc — Purwanchal Educational Trust.",
+  description: "Terms and Conditions for CareerArc.",
   robots: { index: false, follow: false },
 };
 
@@ -19,8 +19,7 @@ export default function TermsPage() {
           </p>
           <p>
             By accessing and using careerarc.academy, you agree to these Terms
-            &amp; Conditions. CareerArc is a unit of Purwanchal Educational
-            Trust.
+            &amp; Conditions.
           </p>
 
           <h2 className="pt-2 text-lg font-semibold text-chocolate">
@@ -60,7 +59,7 @@ export default function TermsPage() {
           </h2>
           <p>
             All content on this website, including logos, text, and graphics, is
-            the property of Purwanchal Educational Trust and CareerArc. Unauthorized
+            the property of CareerArc. Unauthorized
             reproduction or distribution is prohibited.
           </p>
 
@@ -68,7 +67,7 @@ export default function TermsPage() {
             Limitation of Liability
           </h2>
           <p>
-            CareerArc and Purwanchal Educational Trust shall not be liable for
+            CareerArc shall not be liable for
             any direct or indirect damages arising from the use of this website
             or attendance at the ARC-T 2.0 event.
           </p>
@@ -82,7 +81,7 @@ export default function TermsPage() {
           </p>
 
           <p className="pt-4 text-xs text-muted">
-            &copy; 2026 CareerArc &mdash; Purwanchal Educational Trust
+            &copy; 2026 CareerArc
           </p>
         </div>
       </div>

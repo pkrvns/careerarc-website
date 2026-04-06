@@ -143,8 +143,7 @@ export function Footer() {
             </a>
           </div>
           <p className="mt-4 text-center text-xs text-tan/50">
-            &copy; 2026 CareerArc &mdash; Purwanchal Educational Trust. All
-            rights reserved.
+            &copy; 2026 CareerArc. All rights reserved.
           </p>
         </div>
       </div>

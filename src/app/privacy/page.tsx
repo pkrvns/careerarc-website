@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  description: "Privacy Policy for CareerArc — Purwanchal Educational Trust.",
+  description: "Privacy Policy for CareerArc.",
   robots: { index: false, follow: false },
 };
 
@@ -19,7 +19,7 @@ export default function PrivacyPage() {
           </p>
           <p>
             CareerArc (&ldquo;we&rdquo;, &ldquo;our&rdquo;, or
-            &ldquo;us&rdquo;), a unit of Purwanchal Educational Trust, is
+            &ldquo;us&rdquo;) is
             committed to protecting your privacy. This policy explains how we
             collect, use, and safeguard your information when you use our website
             at careerarc.academy.
@@ -76,7 +76,7 @@ export default function PrivacyPage() {
           </p>
 
           <p className="pt-4 text-xs text-muted">
-            &copy; 2026 CareerArc &mdash; Purwanchal Educational Trust
+            &copy; 2026 CareerArc
           </p>
         </div>
       </div>

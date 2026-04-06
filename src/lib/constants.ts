@@ -16,7 +16,7 @@ export const NAV_LINKS = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
   { label: "ARC-T 2.0", href: "/arct2" },
-  { label: "Institutions", href: "/institutions" },
+  { label: "Venue", href: "/institutions" },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -73,7 +73,7 @@ export const FAQS = [
   },
   {
     q: "Is this a BITE admission event?",
-    a: "No. CareerArc provides honest career guidance for ALL career paths. BITE/BIPE/D.Pharm information is available on request at the Programme Info zone.",
+    a: "No. CareerArc provides honest career guidance for ALL career paths. It is an independent event platform hosted at BITE Campus.",
   },
   {
     q: "What if I can't come on my allocated date?",
@@ -85,49 +85,21 @@ export const FAQS = [
   },
 ];
 
-export const INSTITUTIONS_LIST = [
-  {
-    name: "BITE",
-    fullName: "Banaras Institute of Teacher's Education",
-    logo: "/logos/pet-logo.svg",
-    head: "Prof. O.P. Rai (Director) | Dr. Sanjay Jaiswal (Principal)",
-    founded: "2003",
-    programmes: "14 Programmes across UG, PG, and Professional streams",
-    affiliation: "Affiliated to MGKVP (Mahatma Gandhi Kashi Vidyapith)",
-    recognition: "UGC 2(f) & 12(B) recognized. NCTE/SCERT approved.",
-    website: "https://bitevns.ac.in",
-    tagline: "Gyaan, Sanskar, Kaushal — Where Tradition Meets Transformation",
-  },
-  {
-    name: "BIPE",
-    fullName: "Banaras Institute of Professional Education",
-    logo: "/logos/bipe-logo.svg",
-    head: "Mr. Rahul Srivastava (Principal) | Amit Pal (Coordinator)",
-    founded: "",
-    programmes: "Paramedical Programmes",
-    affiliation: "",
-    recognition: "",
-    website: "",
-    tagline: "Professional Education for Healthcare Careers",
-  },
-  {
-    name: "BIP",
-    fullName: "Banaras Institute of Pharmacy (D.Pharm)",
-    logo: "/logos/pharmacy-logo.svg",
-    head: "Sri A.K. Srivastava (Director) | Mrs. Menu (Principal)",
-    founded: "",
-    programmes: "D.Pharm Programme",
-    affiliation: "",
-    recognition: "",
-    website: "",
-    tagline: "Excellence in Pharmaceutical Education",
-  },
-];
+export const VENUE = {
+  name: "BITE",
+  fullName: "Banaras Institute of Teacher's Education",
+  logo: "/logos/bite-logo.svg",
+  head: "Dr. Sanjay Jaiswal (Principal)",
+  founded: "2003",
+  programmes: "14 Programmes across UG, PG, and Professional streams",
+  affiliation: "Affiliated to MGKVP (Mahatma Gandhi Kashi Vidyapith)",
+  recognition: "UGC 2(f) & 12(B) recognized. NCTE/SCERT approved.",
+  website: "https://bitevns.ac.in",
+  tagline: "Gyaan, Sanskar, Kaushal — Where Tradition Meets Transformation",
+};
 
 export const LEADERSHIP = [
   { name: "Dr. Sanjay Jaiswal", designation: "Principal, BITE", role: "Operations lead, faculty coordination", initials: "SJ" },
   { name: "Harshita Rai", designation: "Program Coordinator, CareerArc", role: "Content, social media, event lead, hype campaign, digital marketing", initials: "HR" },
-  { name: "Mr. Rahul Srivastava", designation: "Principal, BIPE", role: "BIPE coordination", initials: "RS" },
-  { name: "Mrs. Menu", designation: "Principal, BIP", role: "D.Pharm booth management, paramedical counselling", initials: "M" },
-  { name: "Amit Pal", designation: "Coordinator, BIPE", role: "BIPE booth and campus logistics", initials: "AP" },
+  { name: "Amit Pal", designation: "Coordinator, CareerArc", role: "Campus logistics and booth coordination", initials: "AP" },
 ];
