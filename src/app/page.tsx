@@ -27,6 +27,11 @@ export default function Home() {
             25-26 April 2026 &mdash; BITE Campus, Varanasi
           </span>
 
+          {/* Tagline */}
+          <p className="mb-3 text-sm font-medium uppercase tracking-widest text-gold">
+            From Aptitude to Understanding
+          </p>
+
           {/* H1 */}
           <h1 className="mb-5 text-[32px] font-semibold leading-tight text-chocolate md:text-5xl">
             Your career journey starts with understanding
