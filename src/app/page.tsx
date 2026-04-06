@@ -28,8 +28,8 @@ export default function Home() {
           </span>
 
           {/* Tagline */}
-          <p className="mb-3 text-sm font-medium uppercase tracking-widest text-gold">
-            From Aptitude to Understanding
+          <p className="mb-4 text-2xl italic text-gold md:text-3xl" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+            &ldquo;From Aptitude to Understanding&rdquo;
           </p>
 
           {/* H1 */}
