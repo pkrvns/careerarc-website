@@ -1,4 +1,4 @@
-import { sql } from "@vercel/postgres";
+import { getDb } from "@/lib/db";
 import { NextResponse } from "next/server";
 import { authenticateRequest } from "@/lib/auth";
 
@@ -10,29 +10,31 @@ export async function GET(request: Request) {
   }
 
   try {
+    const db = getDb();
+
     const { searchParams } = new URL(request.url);
     const date = searchParams.get("date"); // "day1" or "day2"
     const search = searchParams.get("search");
 
     let result;
     if (search) {
-      result = await sql`
+      result = await db.sql`
         SELECT * FROM registrations
         WHERE full_name ILIKE ${"%" + search + "%"} OR mobile LIKE ${"%" + search + "%"}
         ORDER BY registered_at DESC
       `;
     } else if (date) {
-      result = await sql`
+      result = await db.sql`
         SELECT * FROM registrations WHERE preferred_date = ${date} ORDER BY registered_at DESC
       `;
     } else {
-      result = await sql`SELECT * FROM registrations ORDER BY registered_at DESC`;
+      result = await db.sql`SELECT * FROM registrations ORDER BY registered_at DESC`;
     }
 
     // Get counts
-    const day1Count = await sql`SELECT COUNT(*) as count FROM registrations WHERE preferred_date = 'day1'`;
-    const day2Count = await sql`SELECT COUNT(*) as count FROM registrations WHERE preferred_date = 'day2'`;
-    const totalCount = await sql`SELECT COUNT(*) as count FROM registrations`;
+    const day1Count = await db.sql`SELECT COUNT(*) as count FROM registrations WHERE preferred_date = 'day1'`;
+    const day2Count = await db.sql`SELECT COUNT(*) as count FROM registrations WHERE preferred_date = 'day2'`;
+    const totalCount = await db.sql`SELECT COUNT(*) as count FROM registrations`;
 
     return NextResponse.json({
       registrations: result.rows,
@@ -56,13 +58,15 @@ export async function PUT(request: Request) {
   }
 
   try {
+    const db = getDb();
+
     const { id, fullName, mobile, institution, classYear, preferredDate, parentAttending, parentName } = await request.json();
 
     if (!id) {
       return NextResponse.json({ error: "Registration ID is required" }, { status: 400 });
     }
 
-    await sql`
+    await db.sql`
       UPDATE registrations SET
         full_name = ${fullName},
         mobile = ${mobile},
@@ -89,6 +93,8 @@ export async function DELETE(request: Request) {
   }
 
   try {
+    const db = getDb();
+
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 
@@ -96,7 +102,7 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: "Registration ID is required" }, { status: 400 });
     }
 
-    await sql`DELETE FROM registrations WHERE id = ${parseInt(id)}`;
+    await db.sql`DELETE FROM registrations WHERE id = ${parseInt(id)}`;
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error deleting registration:", error);

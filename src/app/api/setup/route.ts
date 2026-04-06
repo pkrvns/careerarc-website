@@ -1,9 +1,11 @@
-import { sql } from "@vercel/postgres";
+import { getDb } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    await sql`
+    const db = getDb();
+
+    await db.sql`
       CREATE TABLE IF NOT EXISTS registrations (
         id SERIAL PRIMARY KEY,
         full_name VARCHAR(255) NOT NULL,
@@ -17,7 +19,7 @@ export async function GET() {
       )
     `;
 
-    await sql`
+    await db.sql`
       CREATE TABLE IF NOT EXISTS guest_registrations (
         id SERIAL PRIMARY KEY,
         guest_name VARCHAR(255) NOT NULL,
@@ -34,10 +36,11 @@ export async function GET() {
       success: true,
       message: "Database tables created successfully (registrations + guest_registrations)",
     });
-  } catch (error) {
-    console.error("Setup error:", error);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    console.error("Setup error:", message);
     return NextResponse.json(
-      { error: "Failed to create tables" },
+      { error: "Failed to create tables", detail: message },
       { status: 500 }
     );
   }

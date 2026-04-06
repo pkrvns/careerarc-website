@@ -1,8 +1,10 @@
-import { sql } from "@vercel/postgres";
+import { getDb } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   try {
+    const db = getDb();
+
     const body = await request.json();
     const { fullName, mobile, institution, classYear, preferredDate, parentAttending, parentName } = body;
 
@@ -23,7 +25,7 @@ export async function POST(request: Request) {
     }
 
     // Check for duplicate registration
-    const existing = await sql`
+    const existing = await db.sql`
       SELECT id FROM registrations WHERE mobile = ${mobile}
     `;
 
@@ -35,7 +37,7 @@ export async function POST(request: Request) {
     }
 
     // Insert registration
-    const result = await sql`
+    const result = await db.sql`
       INSERT INTO registrations (full_name, mobile, institution, class_year, preferred_date, parent_attending, parent_name, registered_at)
       VALUES (${fullName}, ${mobile}, ${institution}, ${classYear}, ${preferredDate}, ${parentAttending || false}, ${parentName || null}, NOW())
       RETURNING id, preferred_date

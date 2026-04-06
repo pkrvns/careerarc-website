@@ -1,10 +1,12 @@
-import { sql } from "@vercel/postgres";
+import { getDb } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 const GUEST_LIMIT_PER_DAY = 200;
 
 export async function POST(request: Request) {
   try {
+    const db = getDb();
+
     const body = await request.json();
     const { guestName, guestMobile, relationship, studentMobile, preferredDate } = body;
 
@@ -32,7 +34,7 @@ export async function POST(request: Request) {
     }
 
     // Verify the student is registered
-    const student = await sql`
+    const student = await db.sql`
       SELECT id, full_name FROM registrations WHERE mobile = ${studentMobile}
     `;
 
@@ -44,7 +46,7 @@ export async function POST(request: Request) {
     }
 
     // Check duplicate guest registration
-    const existingGuest = await sql`
+    const existingGuest = await db.sql`
       SELECT id FROM guest_registrations WHERE guest_mobile = ${guestMobile}
     `;
 
@@ -56,7 +58,7 @@ export async function POST(request: Request) {
     }
 
     // Check guest capacity for the preferred date
-    const guestCount = await sql`
+    const guestCount = await db.sql`
       SELECT COUNT(*) as count FROM guest_registrations WHERE preferred_date = ${preferredDate}
     `;
 
@@ -68,7 +70,7 @@ export async function POST(request: Request) {
     }
 
     // Insert guest registration
-    const result = await sql`
+    const result = await db.sql`
       INSERT INTO guest_registrations (guest_name, guest_mobile, relationship, student_mobile, student_name, preferred_date, registered_at)
       VALUES (${guestName}, ${guestMobile}, ${relationship}, ${studentMobile}, ${student.rows[0].full_name}, ${preferredDate}, NOW())
       RETURNING id, preferred_date

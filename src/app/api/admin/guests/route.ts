@@ -1,4 +1,4 @@
-import { sql } from "@vercel/postgres";
+import { getDb } from "@/lib/db";
 import { NextResponse } from "next/server";
 import { authenticateRequest } from "@/lib/auth";
 
@@ -10,28 +10,30 @@ export async function GET(request: Request) {
   }
 
   try {
+    const db = getDb();
+
     const { searchParams } = new URL(request.url);
     const date = searchParams.get("date");
     const search = searchParams.get("search");
 
     let result;
     if (search) {
-      result = await sql`
+      result = await db.sql`
         SELECT * FROM guest_registrations
         WHERE guest_name ILIKE ${"%" + search + "%"} OR guest_mobile LIKE ${"%" + search + "%"} OR student_mobile LIKE ${"%" + search + "%"}
         ORDER BY registered_at DESC
       `;
     } else if (date) {
-      result = await sql`
+      result = await db.sql`
         SELECT * FROM guest_registrations WHERE preferred_date = ${date} ORDER BY registered_at DESC
       `;
     } else {
-      result = await sql`SELECT * FROM guest_registrations ORDER BY registered_at DESC`;
+      result = await db.sql`SELECT * FROM guest_registrations ORDER BY registered_at DESC`;
     }
 
-    const day1Count = await sql`SELECT COUNT(*) as count FROM guest_registrations WHERE preferred_date = 'day1'`;
-    const day2Count = await sql`SELECT COUNT(*) as count FROM guest_registrations WHERE preferred_date = 'day2'`;
-    const totalCount = await sql`SELECT COUNT(*) as count FROM guest_registrations`;
+    const day1Count = await db.sql`SELECT COUNT(*) as count FROM guest_registrations WHERE preferred_date = 'day1'`;
+    const day2Count = await db.sql`SELECT COUNT(*) as count FROM guest_registrations WHERE preferred_date = 'day2'`;
+    const totalCount = await db.sql`SELECT COUNT(*) as count FROM guest_registrations`;
 
     return NextResponse.json({
       guests: result.rows,
@@ -57,12 +59,14 @@ export async function DELETE(request: Request) {
   }
 
   try {
+    const db = getDb();
+
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
     if (!id) {
       return NextResponse.json({ error: "ID required" }, { status: 400 });
     }
-    await sql`DELETE FROM guest_registrations WHERE id = ${parseInt(id)}`;
+    await db.sql`DELETE FROM guest_registrations WHERE id = ${parseInt(id)}`;
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error deleting guest:", error);
