@@ -32,9 +32,22 @@ export async function GET() {
       )
     `;
 
+    await db.sql`
+      CREATE TABLE IF NOT EXISTS arct_participants (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        father_name VARCHAR(255),
+        institution VARCHAR(255),
+        mobile VARCHAR(15),
+        arct_roll VARCHAR(50) UNIQUE,
+        status VARCHAR(50) DEFAULT 'pending',
+        imported_at TIMESTAMP DEFAULT NOW()
+      )
+    `;
+
     return NextResponse.json({
       success: true,
-      message: "Database tables created successfully (registrations + guest_registrations)",
+      message: "Database tables created successfully (registrations + guest_registrations + arct_participants)",
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";

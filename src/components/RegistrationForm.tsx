@@ -14,24 +14,101 @@ type FormData = {
 };
 
 const institutions = [
-  "Agrasen Inter College",
-  "Annie Besant Inter College",
-  "Arya Mahila Inter College",
-  "BHU Central Hindu School",
-  "Banaras Hindu Inter College",
-  "Central Academy",
-  "DAV Inter College",
-  "Gandhi Inter College",
-  "Harish Chandra Inter College",
-  "Kashi Vidyapith Inter College",
-  "Kendriya Vidyalaya BHU",
-  "Marwari Inter College",
-  "Ravindrapuri Inter College",
-  "Shri Agrasen Inter College",
-  "Sunbeam School",
-  "Tulsi Vidya Niketan",
-  "Udai Pratap Inter College",
-  "Vasant Kanya Mahavidyalaya",
+  "Adarsh Coaching Centre",
+  "Arya Mahila Inter College, Chetganj",
+  "Badri Narayan Vidya Mandir I.C., Kaniyar",
+  "Basant Balika H.S. School",
+  "Bhartiya Shiksha Mandir Inter College",
+  "C.B.D.S. Inter College, Karemua",
+  "C.M.G. Inter College",
+  "Chandrika Singh Inter College",
+  "Delta Public School",
+  "G.M.V. Inter College",
+  "G.V.P. Inter College, Garakhara",
+  "Gautam Valley Public School",
+  "Gopi Radha Balika Inter College",
+  "Green Valley School",
+  "Haji Ali Hasan Shahjaha Girls Inter College",
+  "Hari Bandhu International School",
+  "Indian Public School",
+  "J.C.I.C., Sabhaipur",
+  "J.P. Mehta Inter College",
+  "J.S. I.T. College",
+  "Jai Maa Ambey C.D. Inter College",
+  "Janata Junior High School",
+  "K.D.I. College, Jaunpur",
+  "Kamalapati Tripathi Boys Inter College",
+  "Kamla Balika Inter College",
+  "Kashi Krishak Inter College",
+  "Lt. Madhav Prasad Bhikha Inter College",
+  "Lt. Sampat Bhagirathi Vidya Mandir I.C.",
+  "M.P.B.I.C., Narayanpur Kaniyar",
+  "Maa Bharti Shikshan Sansthan",
+  "Maa Bhagwati Inter College",
+  "Maa Radhika Inter College, Odar",
+  "Maa Rampyari Balika Memorial Inter College",
+  "Mahamana Malviya Inter College",
+  "Mahamaya Malti Devi Inter College",
+  "Mahaveer Modern Public School",
+  "Mata P.V.N.I.C., Chilbila Kundi",
+  "Mathura Prasad Inter College",
+  "National Inter College, Pindra",
+  "P.T.D.D.U. Inter College, Babatpur",
+  "Pannalal Gupta Intermediate College, Jaunpur",
+  "Piyari Devi I.C.",
+  "Prakash Gyanoday Public Inter College",
+  "Queens Inter College, Varanasi",
+  "Rajeshwari Balika Inter College, Harahua",
+  "Rajkiya Ashram Paddati Vidyalaya, Satomahua",
+  "Rajkumari Balika Inter College",
+  "Rashtriya Kanya Inter College",
+  "S.A.S.M. Public School",
+  "S.B. Inter College, Bunchi",
+  "S.B.M.I.C., Barzi Nayepur",
+  "S.B.S. Inter College",
+  "S.D.M.S. Inter College",
+  "S.K.B. Inter College",
+  "S.K.D. Inter College, Bunchi",
+  "S.K.D.I.C., Mangari",
+  "S.K.V. Inter College",
+  "S.N.B.P. Inter College, Khalispur",
+  "S.P.B.G.N. Inter College, Hiramnapur",
+  "S.P.B.S. Inter College, Khalispur",
+  "S.R. Platinum English School",
+  "S.S. Public School, Babatpur",
+  "S.S.S. Public School, Basani",
+  "S.Y.B.I. College",
+  "Sanatan Dharm Inter College",
+  "Sant Kishori Lal Jalan H.S. School",
+  "Sant Narayan Baba Public Inter College",
+  "Sardar Vallabhbhai Patel Inter College",
+  "Science Academy",
+  "Seth Kishori Lal Jalan, Chakka",
+  "Shardha Singh Inter College, Bhaupur Jaunpur",
+  "Shiv Kuwari Balika I.C., Pindra",
+  "Shree Baldev Inter College",
+  "Shree Devmurti Sharma Intermediate College",
+  "Shree Mahadev Inter College",
+  "Shree Prem Bahadur Singh Inter College, Khalispur",
+  "Shree Sahadev I.C., Bhonda Jaunpur",
+  "Shree Tapasvi Maharaj Inter College",
+  "Shri Kamalakar Adarsh Inter College",
+  "Shri Krishna Dev Inter College",
+  "Shri Mahadev Inter College, Nadoy",
+  "Shri Pran Baba Gorakhnath Inter College",
+  "Shri Yugal Bihari Inter College, Rameshwar",
+  "Smt. Kamala Bhagwat I.C., Sadhoganj",
+  "Smt. Savitri Devi Inter College",
+  "Sonkali Intermediate College",
+  "SPAT College, Chandpur",
+  "Sri Mahadev Inter College",
+  "St. Xavier High School",
+  "Subhadra Kumar Inter College",
+  "Sunbeam Academy, Samne Ghat",
+  "Swami Vivekanand Intermediate College",
+  "Tripada Public School",
+  "Tulsi Das Inter College, Anei",
+  "U.P. Inter College",
   "Other",
 ];
 
@@ -40,17 +117,45 @@ export function RegistrationForm() {
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState("");
   const [allocatedDate, setAllocatedDate] = useState("");
+  const [arctInfo, setArctInfo] = useState<{ name: string; institution: string; arctRoll: string } | null>(null);
+  const [lookingUp, setLookingUp] = useState(false);
 
   const {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<FormData>({
     defaultValues: { parentAttending: false, preferredDate: "day1" },
   });
 
   const parentAttending = watch("parentAttending");
+
+  // Auto-fill from ARC-T database when mobile is entered
+  const handleMobileLookup = async (mobile: string) => {
+    if (!/^[6-9]\d{9}$/.test(mobile)) return;
+    setLookingUp(true);
+    try {
+      const res = await fetch(`/api/lookup-participant?mobile=${mobile}`);
+      const data = await res.json();
+      if (data.found) {
+        setArctInfo(data);
+        setValue("fullName", data.name);
+        // Try to match institution
+        const match = institutions.find(
+          (i) => i.toLowerCase().includes(data.institution?.toLowerCase()?.split(" ")[0] || "---")
+        );
+        if (match) setValue("institution", match);
+      } else {
+        setArctInfo(null);
+      }
+    } catch {
+      // Silently fail — lookup is optional
+    } finally {
+      setLookingUp(false);
+    }
+  };
 
   const onSubmit = async (data: FormData) => {
     setSubmitting(true);
@@ -143,6 +248,10 @@ export function RegistrationForm() {
               value: /^[6-9]\d{9}$/,
               message: "Enter a valid 10-digit mobile number",
             },
+            onChange: (e) => {
+              const val = e.target.value.replace(/\D/g, "");
+              if (val.length === 10) handleMobileLookup(val);
+            },
           })}
           type="tel"
           inputMode="numeric"
@@ -150,6 +259,14 @@ export function RegistrationForm() {
           maxLength={10}
           className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-chocolate outline-none transition-colors focus:border-gold focus:ring-1 focus:ring-gold"
         />
+        {lookingUp && (
+          <p className="mt-1 text-xs text-muted">Looking up ARC-T records...</p>
+        )}
+        {arctInfo && (
+          <div className="mt-2 flex items-center gap-2 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">
+            <span>ARC-T Participant: <strong>{arctInfo.name}</strong> ({arctInfo.arctRoll})</span>
+          </div>
+        )}
         {errors.mobile && (
           <p className="mt-1 text-xs text-red-500">{errors.mobile.message}</p>
         )}

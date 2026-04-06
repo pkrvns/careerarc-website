@@ -32,7 +32,7 @@ export function AdminDashboard() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
-  const [tab, setTab] = useState<"students" | "guests">("students");
+  const [tab, setTab] = useState<"students" | "guests" | "arct">("students");
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [guests, setGuests] = useState<Guest[]>([]);
   const [stats, setStats] = useState<Stats>({ total: 0, day1: 0, day2: 0 });
@@ -44,6 +44,9 @@ export function AdminDashboard() {
   const [editing, setEditing] = useState<number | null>(null);
   const [editData, setEditData] = useState<Partial<Registration>>({});
   const [loading, setLoading] = useState(false);
+  const [arctCount, setArctCount] = useState(0);
+  const [importing, setImporting] = useState(false);
+  const [importResult, setImportResult] = useState("");
 
   const login = async () => {
     setLoginError("");
@@ -86,11 +89,22 @@ export function AdminDashboard() {
     }
   }, [search, dateFilter]);
 
+  const fetchArctCount = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/arct-participants");
+      if (res.ok) {
+        const data = await res.json();
+        setArctCount(data.total);
+      }
+    } catch { /* ignore */ }
+  }, []);
+
   useEffect(() => {
     if (!loggedIn) return;
     fetchRegistrations();
     fetchGuests();
-  }, [loggedIn, fetchRegistrations, fetchGuests]);
+    fetchArctCount();
+  }, [loggedIn, fetchRegistrations, fetchGuests, fetchArctCount]);
 
   const saveEdit = async (id: number) => {
     await fetch("/api/admin/registrations", {
@@ -100,6 +114,39 @@ export function AdminDashboard() {
     });
     setEditing(null);
     fetchRegistrations();
+  };
+
+  const handleImportFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImporting(true);
+    setImportResult("");
+    try {
+      const text = await file.text();
+      const participants = JSON.parse(text);
+      // Import in batches of 200
+      let totalImported = 0;
+      let totalSkipped = 0;
+      for (let i = 0; i < participants.length; i += 200) {
+        const batch = participants.slice(i, i + 200);
+        const res = await fetch("/api/admin/import-participants", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ participants: batch }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          totalImported += data.imported;
+          totalSkipped += data.skipped;
+        }
+      }
+      setImportResult(`Imported ${totalImported} participants (${totalSkipped} skipped/duplicates)`);
+      fetchArctCount();
+    } catch {
+      setImportResult("Error importing file. Make sure it's a valid JSON file.");
+    } finally {
+      setImporting(false);
+    }
   };
 
   const deleteRegistration = async (id: number, type: "student" | "guest") => {
@@ -203,6 +250,14 @@ export function AdminDashboard() {
             }`}
           >
             Guests ({guestStats.total})
+          </button>
+          <button
+            onClick={() => setTab("arct")}
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+              tab === "arct" ? "bg-coral text-white" : "bg-white text-brown border border-gold/20"
+            }`}
+          >
+            ARC-T Data ({arctCount})
           </button>
         </div>
 
@@ -327,6 +382,42 @@ export function AdminDashboard() {
                 )}
               </tbody>
             </table>
+          </div>
+        )}
+
+        {/* ARC-T Participants */}
+        {tab === "arct" && (
+          <div className="rounded-xl border border-gold/20 bg-white p-6">
+            <h2 className="mb-4 text-lg font-semibold text-chocolate">ARC-T 2.0 Participants Database</h2>
+            <p className="mb-4 text-sm text-muted">
+              {arctCount > 0
+                ? `${arctCount} participants imported. This data is used to auto-fill the registration form when students enter their mobile number.`
+                : "No participants imported yet. Upload the JSON export file to import ARC-T Phase 1 participant data."}
+            </p>
+            <div className="mb-4 flex items-center gap-4">
+              <label className="cursor-pointer rounded-lg bg-gold px-4 py-2.5 text-sm font-medium text-white hover:bg-gold-dark">
+                {importing ? "Importing..." : "Upload JSON File"}
+                <input
+                  type="file"
+                  accept=".json"
+                  onChange={handleImportFile}
+                  disabled={importing}
+                  className="hidden"
+                />
+              </label>
+              {importResult && (
+                <span className="text-sm text-green-600">{importResult}</span>
+              )}
+            </div>
+            <div className="rounded-lg bg-cream p-4 text-xs text-muted">
+              <p className="font-medium text-chocolate">How it works:</p>
+              <ul className="mt-1 list-inside list-disc space-y-1">
+                <li>Upload the <code>arct-participants.json</code> file from the project folder</li>
+                <li>When students register, entering their mobile auto-fills their name from ARC-T data</li>
+                <li>A green badge shows &quot;ARC-T Participant&quot; status on the form</li>
+                <li>Duplicate roll numbers are skipped during import</li>
+              </ul>
+            </div>
           </div>
         )}
 
