@@ -25,6 +25,19 @@ type Guest = {
   registered_at: string;
 };
 
+type ArctParticipant = {
+  id: number;
+  name: string;
+  father_name: string;
+  institution: string;
+  mobile: string;
+  arct_roll: string;
+  status: string;
+  imported_at: string;
+};
+
+type ArctStats = { total: number; complete: number; pending: number };
+
 type Stats = { total: number; day1: number; day2: number };
 
 export function AdminDashboard() {
@@ -44,7 +57,17 @@ export function AdminDashboard() {
   const [editing, setEditing] = useState<number | null>(null);
   const [editData, setEditData] = useState<Partial<Registration>>({});
   const [loading, setLoading] = useState(false);
-  const [arctCount, setArctCount] = useState(0);
+  const [arctParticipants, setArctParticipants] = useState<ArctParticipant[]>([]);
+  const [arctStats, setArctStats] = useState<ArctStats>({ total: 0, complete: 0, pending: 0 });
+  const [arctPage, setArctPage] = useState(1);
+  const [arctTotalPages, setArctTotalPages] = useState(0);
+  const [arctSearch, setArctSearch] = useState("");
+  const [arctStatusFilter, setArctStatusFilter] = useState("");
+  const [arctInstFilter, setArctInstFilter] = useState("");
+  const [arctInstitutions, setArctInstitutions] = useState<string[]>([]);
+  const [arctEditing, setArctEditing] = useState<number | null>(null);
+  const [arctEditData, setArctEditData] = useState<Partial<ArctParticipant>>({});
+  const [arctLoading, setArctLoading] = useState(false);
   const [importing, setImporting] = useState(false);
   const [importResult, setImportResult] = useState("");
 
@@ -89,22 +112,34 @@ export function AdminDashboard() {
     }
   }, [search, dateFilter]);
 
-  const fetchArctCount = useCallback(async () => {
+  const fetchArctParticipants = useCallback(async (page = 1) => {
+    setArctLoading(true);
     try {
-      const res = await fetch("/api/admin/arct-participants");
+      const params = new URLSearchParams();
+      params.set("page", String(page));
+      params.set("limit", "50");
+      if (arctSearch) params.set("search", arctSearch);
+      if (arctStatusFilter) params.set("status", arctStatusFilter);
+      if (arctInstFilter) params.set("institution", arctInstFilter);
+      const res = await fetch(`/api/admin/arct-participants?${params}`);
       if (res.ok) {
         const data = await res.json();
-        setArctCount(data.total);
+        setArctParticipants(data.participants);
+        setArctStats(data.stats);
+        setArctPage(data.page);
+        setArctTotalPages(data.totalPages);
+        if (data.institutions?.length) setArctInstitutions(data.institutions);
       }
     } catch { /* ignore */ }
-  }, []);
+    setArctLoading(false);
+  }, [arctSearch, arctStatusFilter, arctInstFilter]);
 
   useEffect(() => {
     if (!loggedIn) return;
     fetchRegistrations();
     fetchGuests();
-    fetchArctCount();
-  }, [loggedIn, fetchRegistrations, fetchGuests, fetchArctCount]);
+    fetchArctParticipants();
+  }, [loggedIn, fetchRegistrations, fetchGuests, fetchArctParticipants]);
 
   const saveEdit = async (id: number) => {
     await fetch("/api/admin/registrations", {
@@ -114,6 +149,22 @@ export function AdminDashboard() {
     });
     setEditing(null);
     fetchRegistrations();
+  };
+
+  const saveArctEdit = async (id: number) => {
+    await fetch("/api/admin/arct-participants", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, ...arctEditData }),
+    });
+    setArctEditing(null);
+    fetchArctParticipants(arctPage);
+  };
+
+  const deleteArctParticipant = async (id: number) => {
+    if (!confirm("Delete this ARC-T participant?")) return;
+    await fetch(`/api/admin/arct-participants?id=${id}`, { method: "DELETE" });
+    fetchArctParticipants(arctPage);
   };
 
   const handleImportFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -141,7 +192,7 @@ export function AdminDashboard() {
         }
       }
       setImportResult(`Imported ${totalImported} participants (${totalSkipped} skipped/duplicates)`);
-      fetchArctCount();
+      fetchArctParticipants();
     } catch {
       setImportResult("Error importing file. Make sure it's a valid JSON file.");
     } finally {
@@ -257,7 +308,7 @@ export function AdminDashboard() {
               tab === "arct" ? "bg-coral text-white" : "bg-white text-brown border border-gold/20"
             }`}
           >
-            ARC-T Data ({arctCount})
+            ARC-T Data ({arctStats.total})
           </button>
         </div>
 
@@ -387,37 +438,193 @@ export function AdminDashboard() {
 
         {/* ARC-T Participants */}
         {tab === "arct" && (
-          <div className="rounded-xl border border-gold/20 bg-white p-6">
-            <h2 className="mb-4 text-lg font-semibold text-chocolate">ARC-T 2.0 Participants Database</h2>
-            <p className="mb-4 text-sm text-muted">
-              {arctCount > 0
-                ? `${arctCount} participants imported. This data is used to auto-fill the registration form when students enter their mobile number.`
-                : "No participants imported yet. Upload the JSON export file to import ARC-T Phase 1 participant data."}
-            </p>
-            <div className="mb-4 flex items-center gap-4">
-              <label className="cursor-pointer rounded-lg bg-gold px-4 py-2.5 text-sm font-medium text-white hover:bg-gold-dark">
-                {importing ? "Importing..." : "Upload JSON File"}
-                <input
-                  type="file"
-                  accept=".json"
-                  onChange={handleImportFile}
-                  disabled={importing}
-                  className="hidden"
-                />
-              </label>
-              {importResult && (
-                <span className="text-sm text-green-600">{importResult}</span>
-              )}
+          <div>
+            {/* ARC-T Stats Cards */}
+            <div className="mb-4 grid grid-cols-2 gap-4 md:grid-cols-4">
+              <div className="rounded-xl border border-gold/20 bg-white p-4">
+                <div className="text-2xl font-semibold text-chocolate">{arctStats.total}</div>
+                <div className="text-xs text-muted">Total Participants</div>
+              </div>
+              <div className="rounded-xl border border-gold/20 bg-white p-4">
+                <div className="text-2xl font-semibold text-green-600">{arctStats.complete}</div>
+                <div className="text-xs text-muted">Completed Test</div>
+              </div>
+              <div className="rounded-xl border border-gold/20 bg-white p-4">
+                <div className="text-2xl font-semibold text-amber-600">{arctStats.pending}</div>
+                <div className="text-xs text-muted">Pending (No Test)</div>
+              </div>
+              <div className="rounded-xl border border-gold/20 bg-white p-4">
+                <label className="cursor-pointer rounded-lg bg-gold px-4 py-2 text-sm font-medium text-white hover:bg-gold-dark">
+                  {importing ? "Importing..." : "Import JSON"}
+                  <input type="file" accept=".json" onChange={handleImportFile} disabled={importing} className="hidden" />
+                </label>
+                {importResult && <div className="mt-1 text-xs text-green-600">{importResult}</div>}
+              </div>
             </div>
-            <div className="rounded-lg bg-cream p-4 text-xs text-muted">
-              <p className="font-medium text-chocolate">How it works:</p>
-              <ul className="mt-1 list-inside list-disc space-y-1">
-                <li>Upload the <code>arct-participants.json</code> file from the project folder</li>
-                <li>When students register, entering their mobile auto-fills their name from ARC-T data</li>
-                <li>A green badge shows &quot;ARC-T Participant&quot; status on the form</li>
-                <li>Duplicate roll numbers are skipped during import</li>
-              </ul>
+
+            {/* ARC-T Search + Filters */}
+            <div className="mb-4 flex flex-col gap-3 sm:flex-row">
+              <input
+                type="text"
+                placeholder="Search name, mobile, roll no..."
+                value={arctSearch}
+                onChange={(e) => setArctSearch(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter") { setArctPage(1); fetchArctParticipants(1); } }}
+                className="flex-1 rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-gold"
+              />
+              <select
+                value={arctStatusFilter}
+                onChange={(e) => { setArctStatusFilter(e.target.value); setArctPage(1); }}
+                className="rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-gold"
+              >
+                <option value="">All Status</option>
+                <option value="complete">Complete</option>
+                <option value="pending">Pending</option>
+              </select>
+              <select
+                value={arctInstFilter}
+                onChange={(e) => { setArctInstFilter(e.target.value); setArctPage(1); }}
+                className="max-w-[250px] rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-gold"
+              >
+                <option value="">All Institutions</option>
+                {arctInstitutions.map((inst) => (
+                  <option key={inst} value={inst}>{inst}</option>
+                ))}
+              </select>
+              <button
+                onClick={() => { setArctPage(1); fetchArctParticipants(1); }}
+                className="rounded-lg bg-gold px-4 py-2.5 text-sm font-medium text-white hover:bg-gold-dark"
+              >
+                Search
+              </button>
             </div>
+
+            {/* ARC-T Table */}
+            <div className="overflow-x-auto rounded-xl border border-gold/20 bg-white">
+              <table className="w-full text-left text-sm">
+                <thead className="border-b border-gold/10 bg-cream">
+                  <tr>
+                    <th className="px-3 py-3 font-medium text-chocolate">#</th>
+                    <th className="px-3 py-3 font-medium text-chocolate">Roll No</th>
+                    <th className="px-3 py-3 font-medium text-chocolate">Name</th>
+                    <th className="px-3 py-3 font-medium text-chocolate">Father&apos;s Name</th>
+                    <th className="px-3 py-3 font-medium text-chocolate">Mobile</th>
+                    <th className="px-3 py-3 font-medium text-chocolate">Institution</th>
+                    <th className="px-3 py-3 font-medium text-chocolate">Status</th>
+                    <th className="px-3 py-3 font-medium text-chocolate">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {arctLoading ? (
+                    <tr><td colSpan={8} className="px-4 py-8 text-center text-muted">Loading...</td></tr>
+                  ) : arctParticipants.length === 0 ? (
+                    <tr><td colSpan={8} className="px-4 py-8 text-center text-muted">No participants found</td></tr>
+                  ) : (
+                    arctParticipants.map((p, i) => (
+                      <tr key={p.id} className="border-b border-gold/5 hover:bg-ivory/50">
+                        <td className="px-3 py-2.5 text-muted">{(arctPage - 1) * 50 + i + 1}</td>
+                        <td className="px-3 py-2.5 font-mono text-xs text-chocolate">{p.arct_roll}</td>
+                        <td className="px-3 py-2.5 font-medium text-chocolate">
+                          {arctEditing === p.id ? (
+                            <input value={arctEditData.name ?? p.name} onChange={(e) => setArctEditData({ ...arctEditData, name: e.target.value })} className="w-full rounded border px-2 py-1 text-sm" />
+                          ) : p.name}
+                        </td>
+                        <td className="px-3 py-2.5 text-xs">
+                          {arctEditing === p.id ? (
+                            <input value={arctEditData.father_name ?? p.father_name} onChange={(e) => setArctEditData({ ...arctEditData, father_name: e.target.value })} className="w-full rounded border px-2 py-1 text-sm" />
+                          ) : p.father_name}
+                        </td>
+                        <td className="px-3 py-2.5">
+                          {arctEditing === p.id ? (
+                            <input value={arctEditData.mobile ?? p.mobile} onChange={(e) => setArctEditData({ ...arctEditData, mobile: e.target.value })} className="w-28 rounded border px-2 py-1 text-sm" />
+                          ) : p.mobile}
+                        </td>
+                        <td className="px-3 py-2.5 text-xs">
+                          {arctEditing === p.id ? (
+                            <input value={arctEditData.institution ?? p.institution} onChange={(e) => setArctEditData({ ...arctEditData, institution: e.target.value })} className="w-full rounded border px-2 py-1 text-sm" />
+                          ) : p.institution}
+                        </td>
+                        <td className="px-3 py-2.5">
+                          {arctEditing === p.id ? (
+                            <select value={arctEditData.status ?? p.status} onChange={(e) => setArctEditData({ ...arctEditData, status: e.target.value })} className="rounded border px-2 py-1 text-sm">
+                              <option value="complete">Complete</option>
+                              <option value="pending">Pending</option>
+                            </select>
+                          ) : (
+                            <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${p.status?.toLowerCase() === "complete" ? "bg-green-50 text-green-700" : "bg-amber-50 text-amber-700"}`}>
+                              {p.status?.toLowerCase() === "complete" ? "Complete" : "Pending"}
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-3 py-2.5">
+                          {arctEditing === p.id ? (
+                            <div className="flex gap-2">
+                              <button onClick={() => saveArctEdit(p.id)} className="text-xs text-green-600 hover:underline">Save</button>
+                              <button onClick={() => setArctEditing(null)} className="text-xs text-muted hover:underline">Cancel</button>
+                            </div>
+                          ) : (
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => { setArctEditing(p.id); setArctEditData({ name: p.name, father_name: p.father_name, institution: p.institution, mobile: p.mobile, status: p.status }); }}
+                                className="text-xs text-gold hover:underline"
+                              >Edit</button>
+                              <button onClick={() => deleteArctParticipant(p.id)} className="text-xs text-red-500 hover:underline">Delete</button>
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pagination */}
+            {arctTotalPages > 1 && (
+              <div className="mt-4 flex items-center justify-between">
+                <p className="text-sm text-muted">
+                  Page {arctPage} of {arctTotalPages} ({arctStats.total} total)
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => { const p = Math.max(1, arctPage - 1); setArctPage(p); fetchArctParticipants(p); }}
+                    disabled={arctPage <= 1}
+                    className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm disabled:opacity-40 hover:bg-cream"
+                  >
+                    Previous
+                  </button>
+                  {/* Page numbers */}
+                  {Array.from({ length: Math.min(5, arctTotalPages) }, (_, i) => {
+                    let pageNum: number;
+                    if (arctTotalPages <= 5) {
+                      pageNum = i + 1;
+                    } else if (arctPage <= 3) {
+                      pageNum = i + 1;
+                    } else if (arctPage >= arctTotalPages - 2) {
+                      pageNum = arctTotalPages - 4 + i;
+                    } else {
+                      pageNum = arctPage - 2 + i;
+                    }
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => { setArctPage(pageNum); fetchArctParticipants(pageNum); }}
+                        className={`rounded-lg px-3 py-1.5 text-sm ${pageNum === arctPage ? "bg-coral text-white" : "border border-gray-300 hover:bg-cream"}`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                  <button
+                    onClick={() => { const p = Math.min(arctTotalPages, arctPage + 1); setArctPage(p); fetchArctParticipants(p); }}
+                    disabled={arctPage >= arctTotalPages}
+                    className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm disabled:opacity-40 hover:bg-cream"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
