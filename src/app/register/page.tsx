@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { RegistrationForm } from "@/components/RegistrationForm";
+import { RegistrationTabs } from "@/components/RegistrationTabs";
 
 export const metadata: Metadata = {
   title: "Register for ARC-T 2.0",
@@ -23,7 +23,7 @@ export default function RegisterPage() {
             Campus, Varanasi
           </p>
         </div>
-        <RegistrationForm />
+        <RegistrationTabs />
       </div>
     </section>
   );

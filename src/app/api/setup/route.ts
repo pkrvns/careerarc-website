@@ -17,14 +17,27 @@ export async function GET() {
       )
     `;
 
+    await sql`
+      CREATE TABLE IF NOT EXISTS guest_registrations (
+        id SERIAL PRIMARY KEY,
+        guest_name VARCHAR(255) NOT NULL,
+        guest_mobile VARCHAR(15) NOT NULL UNIQUE,
+        relationship VARCHAR(50) NOT NULL,
+        student_mobile VARCHAR(15) NOT NULL,
+        student_name VARCHAR(255),
+        preferred_date VARCHAR(10) NOT NULL,
+        registered_at TIMESTAMP DEFAULT NOW()
+      )
+    `;
+
     return NextResponse.json({
       success: true,
-      message: "Database table created successfully",
+      message: "Database tables created successfully (registrations + guest_registrations)",
     });
   } catch (error) {
     console.error("Setup error:", error);
     return NextResponse.json(
-      { error: "Failed to create table" },
+      { error: "Failed to create tables" },
       { status: 500 }
     );
   }
