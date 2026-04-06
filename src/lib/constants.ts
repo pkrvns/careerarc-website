@@ -16,35 +16,34 @@ export const NAV_LINKS = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
   { label: "ARC-T 2.0", href: "/arct2" },
-  { label: "Venue", href: "/institutions" },
+  { label: "Institutions", href: "/institutions" },
   { label: "Contact", href: "/contact" },
 ];
 
 export const UNDERSTANDING_ZONES = [
   { letter: "U", word: "Unlock", color: "#2563EB", description: "Gate entry + QR scan" },
-  { letter: "N", word: "Navigate", color: "#0D9488", description: "Welcome desk + kit collection" },
-  { letter: "D", word: "Discover", color: "#7C3AED", description: "Aptitude quiz (12 min)" },
-  { letter: "E", word: "Enlighten", color: "#D4740A", description: "Career guidance talks in MPH" },
-  { letter: "R", word: "Resolve", color: "#059669", description: "One-on-one counselling" },
-  { letter: "S", word: "Strengthen", color: "#DB2777", description: "RIASEC profiling + personality test" },
-  { letter: "T", word: "Transform", color: "#1E40AF", description: "Skill-building workshop" },
-  { letter: "A", word: "Aspire", color: "#D4740A", description: "Career roadmap planning" },
-  { letter: "N", word: "Nurture", color: "#DC2626", description: "Mentorship corner + Q&A" },
-  { letter: "D", word: "Develop", color: "#059669", description: "Programme info booth" },
-  { letter: "I", word: "Inspire", color: "#8B5CF6", description: "Success stories wall" },
-  { letter: "N", word: "Nourish", color: "#0D9488", description: "Refreshment zone" },
-  { letter: "G", word: "Graduate", color: "#C5973E", description: "Certificate + prize ceremony" },
+  { letter: "N", word: "Navigate", color: "#0D9488", description: "Career Aptitude Quiz (12-question RIASEC)" },
+  { letter: "D", word: "Discover", color: "#7C3AED", description: "Buffer zone — career videos on loop" },
+  { letter: "E", word: "Enlighten", color: "#D4740A", description: "MPH — Welcome + New-Age Careers talk" },
+  { letter: "R", word: "Resolve", color: "#059669", description: "Govt Jobs roadmap + Financial Literacy session" },
+  { letter: "S", word: "Strengthen", color: "#DB2777", description: "Women Empowerment booth / Parents Room" },
+  { letter: "T", word: "Transform", color: "#1E40AF", description: "Career Booth: Science, Engineering & IT" },
+  { letter: "A", word: "Aspire", color: "#D4740A", description: "Career Booth: Arts, Humanities & Teaching" },
+  { letter: "N", word: "Nurture", color: "#DC2626", description: "Career Booth: Medical, Paramedical & Pharmacy" },
+  { letter: "D", word: "Develop", color: "#059669", description: "Career Booth: Commerce, Finance & Govt Exams" },
+  { letter: "I", word: "Inspire", color: "#8B5CF6", description: "Fun Zone — Selfie Stall + Science Magic" },
+  { letter: "N", word: "Nourish", color: "#0D9488", description: "Refreshment Zone — Canteen" },
+  { letter: "G", word: "Graduate", color: "#C5973E", description: "Grand Ceremony + Career Passport at Exit" },
 ];
 
 export const SCHEDULE = [
-  { time: "2:00 PM", title: "Gate Entry + QR Scan", desc: "Check-in at the Unlock zone" },
-  { time: "2:10 PM", title: "Aptitude Quiz", desc: "12-minute quick assessment" },
-  { time: "2:25 PM", title: "Career Talks in MPH", desc: "Expert guidance sessions" },
-  { time: "3:00 PM", title: "Career Booths", desc: "Self-paced exploration" },
-  { time: "3:45 PM", title: "Fun Zone + Selfies", desc: "Interactive activities" },
-  { time: "4:15 PM", title: "Refreshments", desc: "Nourish zone break" },
-  { time: "4:45 PM", title: "Prize Ceremony", desc: "Awards and recognition" },
-  { time: "5:30 PM", title: "Exit with Career Passport", desc: "Collect your certificate" },
+  { time: "2:00 PM", title: "Gate Entry + QR Scan (UNLOCK)", desc: "Check-in and welcome" },
+  { time: "2:00–2:12", title: "Career Aptitude Quiz (NAVIGATE)", desc: "12-question RIASEC assessment" },
+  { time: "2:25–2:55", title: "MPH Session (ENLIGHTEN + RESOLVE)", desc: "Welcome + New-Age Careers + Govt Jobs + Financial Literacy" },
+  { time: "2:55–4:30", title: "Self-Paced Booth Exploration", desc: "5 career booths + fun zone + selfie stall (STRENGTHEN → INSPIRE)" },
+  { time: "4:30–4:45", title: "Refreshments (NOURISH)", desc: "Canteen break + stamp count check" },
+  { time: "4:45–5:30", title: "GRAND CEREMONY (GRADUATE)", desc: "Awards, Lucky Draw, group photo" },
+  { time: "5:30 PM", title: "Exit", desc: "QR scan, feedback, Career Pathway Card printout" },
 ];
 
 export const FAQS = [
@@ -126,11 +125,9 @@ export const INSTITUTIONS_LIST = [
 ];
 
 export const LEADERSHIP = [
-  { name: "Prof. O.P. Rai", designation: "Director, BITE", role: "Patron — CareerArc", initials: "OR" },
-  { name: "Dr. Sanjay Jaiswal", designation: "Principal, BITE", role: "Operations Lead — ARC-T 2.0", initials: "SJ" },
-  { name: "Harshita Rai", designation: "Program Coordinator", role: "Content, Social Media, Event Coordination", initials: "HR" },
-  { name: "Mr. Rahul Srivastava", designation: "Principal, BIPE", role: "Paramedical Programmes", initials: "RS" },
-  { name: "Sri A.K. Srivastava", designation: "Director, BIP", role: "D.Pharm Programme", initials: "AS" },
-  { name: "Mrs. Menu", designation: "Principal, BIP", role: "Pharmacy Operations", initials: "M" },
-  { name: "Amit Pal", designation: "Coordinator, BIPE", role: "BIPE Coordination", initials: "AP" },
+  { name: "Dr. Sanjay Jaiswal", designation: "Principal, BITE", role: "Operations lead, faculty coordination", initials: "SJ" },
+  { name: "Harshita Rai", designation: "Program Coordinator, CareerArc", role: "Content, social media, event lead, hype campaign, digital marketing", initials: "HR" },
+  { name: "Mr. Rahul Srivastava", designation: "Principal, BIPE", role: "BIPE coordination", initials: "RS" },
+  { name: "Mrs. Menu", designation: "Principal, BIP", role: "D.Pharm booth management, paramedical counselling", initials: "M" },
+  { name: "Amit Pal", designation: "Coordinator, BIPE", role: "BIPE booth and campus logistics", initials: "AP" },
 ];

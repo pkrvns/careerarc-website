@@ -82,7 +82,7 @@ export default function ContactPage() {
               <h3 className="mb-2 text-sm font-medium uppercase tracking-wider text-muted">
                 Social Media
               </h3>
-              <div className="flex gap-4">
+              <div className="flex flex-col gap-2">
                 <a
                   href={SOCIAL_LINKS.instagram}
                   target="_blank"
@@ -90,6 +90,14 @@ export default function ContactPage() {
                   className="text-sm text-brown transition-colors hover:text-gold"
                 >
                   @careerarc_academy (Instagram)
+                </a>
+                <a
+                  href={SOCIAL_LINKS.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-brown transition-colors hover:text-gold"
+                >
+                  CareerArc (Facebook)
                 </a>
               </div>
             </div>

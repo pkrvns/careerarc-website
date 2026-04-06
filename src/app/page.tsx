@@ -100,8 +100,8 @@ export default function Home() {
           </div>
           {/* Stamp tiers */}
           <div className="mt-8 rounded-xl bg-cream p-4 text-center text-sm text-brown md:text-base">
-            Complete 6 stamps = Certificate &nbsp;|&nbsp; 9 stamps = Lucky Draw
-            &nbsp;|&nbsp; 13 stamps = Grand Prize
+            6 stamps = Participation Certificate &nbsp;|&nbsp; 9 stamps = Lucky
+            Draw Entry &nbsp;|&nbsp; 13 stamps = GRAND PRIZE Draw Entry
           </div>
         </div>
       </section>

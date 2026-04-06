@@ -57,9 +57,10 @@ export default function ArctPage() {
           <p className="mb-6 leading-relaxed text-body">
             ARC-T 2.0 (Phase 2) is the <strong>Recognition &amp; Guidance Day</strong> &mdash;
             a free event on 25-26 April 2026 at BITE Campus, Babatpur,
-            Varanasi. Top 2,000 students (by rank) are invited for career
-            guidance, RIASEC profiling, prizes, and the UNDERSTANDING stamp
-            journey across 13 zones.
+            Varanasi. All 3,014 students who completed ARC-T Phase 1 are
+            invited to the Recognition &amp; Guidance Day. 1,000 spots
+            available per day &mdash; register early to secure your preferred
+            date.
           </p>
           <p className="text-center font-serif text-lg italic text-gold md:text-xl">
             &ldquo;ARC-T doesn&apos;t choose for you. It helps you choose better.&rdquo;
@@ -152,8 +153,8 @@ export default function ArctPage() {
           </div>
           <div className="rounded-xl bg-white p-4 text-sm text-brown">
             <strong>Stamp tiers:</strong> 6 stamps = Participation Certificate
-            &bull; 9 stamps = Lucky Draw Entry &bull; 13 stamps = Grand Prize
-            Draw
+            &bull; 9 stamps = Lucky Draw Entry &bull; 13 stamps = GRAND PRIZE
+            Draw Entry
           </div>
         </div>
       </section>
