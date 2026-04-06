@@ -144,6 +144,10 @@ export function Footer() {
           </div>
           <p className="mt-4 text-center text-xs text-tan/50">
             &copy; 2026 CareerArc. All rights reserved.
+            <span className="mx-2">|</span>
+            <Link href="/admin" className="text-tan/30 transition-colors hover:text-tan/60">
+              Admin
+            </Link>
           </p>
         </div>
       </div>
