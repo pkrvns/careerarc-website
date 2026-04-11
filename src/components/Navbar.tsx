@@ -63,7 +63,7 @@ export function Navbar() {
           href="/register"
           className="hidden rounded-full bg-gold px-5 py-2 text-[15px] font-medium text-white transition-colors hover:bg-gold-dark md:inline-block"
         >
-          Book Session
+          Get Career Kit
         </Link>
 
         {/* Mobile Hamburger */}
@@ -111,7 +111,7 @@ export function Navbar() {
               onClick={() => setMenuOpen(false)}
               className="mt-4 rounded-lg bg-coral px-8 py-3 text-base font-medium text-white transition-colors hover:bg-coral-dark"
             >
-              Book Your Free Session
+              Get Your Free Career Kit
             </Link>
             <div className="mt-6 flex flex-col items-center gap-2 text-sm text-brown">
               <a href={`tel:${PHONE_NUMBERS[0].tel}`} className="text-gold">

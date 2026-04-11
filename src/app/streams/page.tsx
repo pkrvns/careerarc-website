@@ -20,7 +20,7 @@ export default function StreamsPage() {
           <p className="text-sm text-body md:text-base">
             Explore careers across 10 fields. Each stream includes career options,
             salary ranges, educational pathways, and key exams. Not sure where you
-            fit? Book a free counselling session.
+            fit? Book a free career guidance session.
           </p>
         </div>
       </section>
@@ -93,8 +93,8 @@ export default function StreamsPage() {
             Not Sure Which Stream is Right for You?
           </h2>
           <p className="mb-6 text-sm text-body">
-            Book a free counselling session and get personalised guidance based on
-            your aptitude, interests, and goals.
+            Book a free career guidance session and get your Career Kit with personalised
+            guidance based on your aptitude, interests, and goals.
           </p>
           <Link
             href="/register"

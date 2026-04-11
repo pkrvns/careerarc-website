@@ -5,7 +5,7 @@ import { LEADERSHIP } from "@/lib/constants";
 export const metadata: Metadata = {
   title: "About CareerArc",
   description:
-    "CareerArc is a career counselling initiative empowering students in Varanasi and eastern UP with guidance, confidence, and direction.",
+    "CareerArc is a career guidance initiative empowering students in Varanasi and eastern UP with guidance, confidence, and direction.",
 };
 
 export default function AboutPage() {
@@ -18,7 +18,7 @@ export default function AboutPage() {
             About CareerArc
           </h1>
           <p className="mb-4 leading-relaxed text-body">
-            Launched in 2025, CareerArc is a career counselling initiative that
+            Launched in 2025, CareerArc is a career guidance initiative that
             empowers students &mdash; especially from rural and underprivileged
             backgrounds in Varanasi and eastern Uttar Pradesh &mdash; with the
             knowledge, confidence, and direction they need to choose the right

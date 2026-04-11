@@ -23,13 +23,13 @@ export default function Home() {
 
           {/* H1 */}
           <h1 className="mb-5 text-[32px] font-semibold leading-tight text-chocolate md:text-5xl">
-            Free Career Counselling for 3,000+ Students
+            Get Your FREE Career Kit + Personal Guidance
           </h1>
 
           {/* Subtitle */}
           <p className="mx-auto mb-8 max-w-xl text-[15px] leading-relaxed text-body md:text-base">
-            Honest, unbiased career guidance for students in Varanasi and eastern UP.
-            Book your free session, visit BITE Campus, and discover your career path.
+            Honest, unbiased career guidance for 3,000+ students in Varanasi and eastern UP.
+            Book your free session, visit BITE Campus, and get your Career Kit — bag, notebook, report card, career plan, handouts, scholarship guide, and certificate.
           </p>
 
           {/* Buttons */}
@@ -38,7 +38,7 @@ export default function Home() {
               href="/register"
               className="w-full rounded-lg bg-coral px-8 py-3 text-base font-medium text-white transition-colors hover:bg-coral-dark sm:w-auto"
             >
-              Book Your Free Session
+              Get Your Free Career Kit
             </Link>
             <Link
               href="/streams"
@@ -78,8 +78,37 @@ export default function Home() {
               href="/register"
               className="inline-block rounded-lg bg-coral px-8 py-3 text-base font-medium text-white transition-colors hover:bg-coral-dark"
             >
-              Book Your Free Session
+              Get Your Free Career Kit
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Career Kit Section */}
+      <section className="bg-cream px-4 py-16 md:py-20">
+        <div className="mx-auto max-w-[900px]">
+          <h2 className="mb-2 text-center text-2xl font-semibold text-chocolate md:text-[32px]">
+            Your FREE Career Kit
+          </h2>
+          <p className="mb-10 text-center text-sm text-muted">
+            Every student gets a complete Career Kit — absolutely free
+          </p>
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+            {[
+              { icon: "🎒", item: "CareerArc Tote Bag" },
+              { icon: "📓", item: "Notebook + Pen" },
+              { icon: "📊", item: "RIASEC Report Card" },
+              { icon: "🗺️", item: "Career Pathway Card" },
+              { icon: "📄", item: "2 Stream Handouts" },
+              { icon: "🎓", item: "Scholarship Guide" },
+              { icon: "📋", item: "90-Day Action Plan" },
+              { icon: "🏅", item: "Personalized Certificate" },
+            ].map((k) => (
+              <div key={k.item} className="flex flex-col items-center rounded-xl border border-gold/20 bg-white p-4 text-center">
+                <span className="mb-2 text-2xl">{k.icon}</span>
+                <span className="text-xs font-medium text-chocolate">{k.item}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -260,7 +289,7 @@ export default function Home() {
             href="/register"
             className="inline-block rounded-lg bg-white px-10 py-3.5 text-base font-semibold text-coral transition-colors hover:bg-cream"
           >
-            Book Your Free Session
+            Get Your Free Career Kit
           </Link>
         </div>
       </section>

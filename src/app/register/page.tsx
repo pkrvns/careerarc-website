@@ -4,7 +4,7 @@ import { RegistrationTabs } from "@/components/RegistrationTabs";
 export const metadata: Metadata = {
   title: "Book Your Free Session",
   description:
-    "Book your free career counselling session at CareerArc. ARC-T 2.0 Recognition & Guidance Day — 25-26 April 2026, BITE Campus, Varanasi.",
+    "Get your free Career Kit + personal career guidance at CareerArc. ARC-T 2.0 Recognition & Guidance Day — 25-26 April 2026, BITE Campus, Varanasi.",
 };
 
 export default function RegisterPage() {
@@ -19,8 +19,8 @@ export default function RegisterPage() {
             Book Your Free Session
           </h1>
           <p className="text-sm text-body">
-            Career counselling at BITE Campus, Varanasi.
-            Pick your date, bring your Aadhaar, and discover your career path.
+            Career guidance at BITE Campus, Varanasi.
+            Pick your date, bring your Aadhaar, and get your FREE Career Kit.
           </p>
         </div>
         <RegistrationTabs />

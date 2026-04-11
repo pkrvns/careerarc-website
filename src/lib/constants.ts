@@ -15,6 +15,7 @@ export const SOCIAL_LINKS = {
 export const NAV_LINKS = [
   { label: "Home", href: "/" },
   { label: "Career Streams", href: "/streams" },
+  { label: "Testimonials", href: "/testimonials" },
   { label: "About", href: "/about" },
   { label: "ARC-T 2.0", href: "/arct2" },
   { label: "Contact", href: "/contact" },

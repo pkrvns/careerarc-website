@@ -48,6 +48,11 @@ export async function GET() {
     // Add new columns to registrations if missing
     await db.query(`ALTER TABLE registrations ADD COLUMN IF NOT EXISTS has_smartphone BOOLEAN DEFAULT TRUE`);
     await db.query(`ALTER TABLE registrations ADD COLUMN IF NOT EXISTS stream_interest VARCHAR(100)`);
+    await db.query(`ALTER TABLE registrations ADD COLUMN IF NOT EXISTS riasec_type VARCHAR(10)`);
+    await db.query(`ALTER TABLE registrations ADD COLUMN IF NOT EXISTS riasec_scores_json TEXT`);
+    await db.query(`ALTER TABLE registrations ADD COLUMN IF NOT EXISTS is_guest BOOLEAN DEFAULT FALSE`);
+    await db.query(`ALTER TABLE registrations ADD COLUMN IF NOT EXISTS parent_phone VARCHAR(15)`);
+    await db.query(`ALTER TABLE registrations ADD COLUMN IF NOT EXISTS qr_code_hash VARCHAR(100)`);
 
     // Sessions table — for counselling programme
     await db.sql`
@@ -65,6 +70,12 @@ export async function GET() {
         created_at TIMESTAMP DEFAULT NOW()
       )
     `;
+
+    // Add missing columns to sessions
+    await db.query(`ALTER TABLE sessions ADD COLUMN IF NOT EXISTS start_time TIMESTAMP`);
+    await db.query(`ALTER TABLE sessions ADD COLUMN IF NOT EXISTS end_time TIMESTAMP`);
+    await db.query(`ALTER TABLE sessions ADD COLUMN IF NOT EXISTS pathway_card_data TEXT`);
+    await db.query(`ALTER TABLE sessions ADD COLUMN IF NOT EXISTS career_kit_issued BOOLEAN DEFAULT FALSE`);
 
     // Feedback table
     await db.sql`
@@ -91,6 +102,13 @@ export async function GET() {
         scanned_at TIMESTAMP DEFAULT NOW()
       )
     `;
+
+    // Add missing columns to feedback
+    await db.query(`ALTER TABLE feedback ADD COLUMN IF NOT EXISTS captured_by VARCHAR(255)`);
+
+    // Add missing columns to qr_scans
+    await db.query(`ALTER TABLE qr_scans ADD COLUMN IF NOT EXISTS aadhaar_verified BOOLEAN DEFAULT FALSE`);
+    await db.query(`ALTER TABLE qr_scans ADD COLUMN IF NOT EXISTS location_note VARCHAR(255)`);
 
     // Reference slips table
     await db.sql`
@@ -182,9 +200,79 @@ export async function GET() {
       )
     `;
 
+    // Career Kit Inventory table
+    await db.sql`
+      CREATE TABLE IF NOT EXISTS career_kit_inventory (
+        id SERIAL PRIMARY KEY,
+        item VARCHAR(100) NOT NULL UNIQUE,
+        stock_in INTEGER DEFAULT 0,
+        stock_out INTEGER DEFAULT 0,
+        current_stock INTEGER DEFAULT 0,
+        alert_threshold INTEGER DEFAULT 200,
+        last_updated TIMESTAMP DEFAULT NOW()
+      )
+    `;
+
+    // Notifications table
+    await db.sql`
+      CREATE TABLE IF NOT EXISTS notifications (
+        id SERIAL PRIMARY KEY,
+        user_name VARCHAR(255),
+        type VARCHAR(50) NOT NULL,
+        title VARCHAR(255) NOT NULL,
+        message TEXT,
+        severity VARCHAR(20) DEFAULT 'info',
+        is_read BOOLEAN DEFAULT FALSE,
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `;
+
+    // WhatsApp messages tracking
+    await db.sql`
+      CREATE TABLE IF NOT EXISTS whatsapp_messages (
+        id SERIAL PRIMARY KEY,
+        student_id INTEGER,
+        template_type VARCHAR(50),
+        phone VARCHAR(15),
+        status VARCHAR(20) DEFAULT 'queued',
+        msg91_message_id VARCHAR(100),
+        sent_at TIMESTAMP,
+        delivered_at TIMESTAMP,
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `;
+
+    // Institutions master table
+    await db.sql`
+      CREATE TABLE IF NOT EXISTS institutions (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL UNIQUE,
+        principal_name VARCHAR(255),
+        phone VARCHAR(15),
+        address TEXT,
+        district VARCHAR(100),
+        teacher_confirmed BOOLEAN DEFAULT FALSE,
+        students_count INTEGER DEFAULT 0,
+        rep_name VARCHAR(255),
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `;
+
+    // Add missing columns to debrief_reports
+    await db.query(`ALTER TABLE debrief_reports ADD COLUMN IF NOT EXISTS tomorrow_prep TEXT`);
+    await db.query(`ALTER TABLE debrief_reports ADD COLUMN IF NOT EXISTS updates_needed TEXT`);
+
+    // Add missing columns to reference_slips
+    await db.query(`ALTER TABLE reference_slips ADD COLUMN IF NOT EXISTS thermal_printed BOOLEAN DEFAULT FALSE`);
+
+    // Add missing columns to certificates
+    await db.query(`ALTER TABLE certificates ADD COLUMN IF NOT EXISTS tagline VARCHAR(500)`);
+    await db.query(`ALTER TABLE certificates ADD COLUMN IF NOT EXISTS best_wishes_msg TEXT`);
+    await db.query(`ALTER TABLE certificates ADD COLUMN IF NOT EXISTS printed BOOLEAN DEFAULT FALSE`);
+
     return NextResponse.json({
       success: true,
-      message: "All database tables created successfully",
+      message: "All database tables created successfully (16 tables + all columns)",
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";

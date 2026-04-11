@@ -2,10 +2,13 @@
 
 import { useState, useEffect, useCallback, lazy, Suspense } from "react";
 
+const DashboardHome = lazy(() => import("./DashboardHome").then(m => ({ default: m.DashboardHome })));
 const CertificatesPanel = lazy(() => import("./CertificatesPanel").then(m => ({ default: m.CertificatesPanel })));
 const DebriefPanel = lazy(() => import("./DebriefPanel").then(m => ({ default: m.DebriefPanel })));
 const AnalyticsPanel = lazy(() => import("./AnalyticsPanel").then(m => ({ default: m.AnalyticsPanel })));
 const NotificationsPanel = lazy(() => import("./NotificationsPanel").then(m => ({ default: m.NotificationsPanel })));
+const InventoryPanel = lazy(() => import("./InventoryPanel").then(m => ({ default: m.InventoryPanel })));
+const SchedulerPanel = lazy(() => import("./SchedulerPanel").then(m => ({ default: m.SchedulerPanel })));
 
 type Registration = {
   id: number;
@@ -50,7 +53,7 @@ export function AdminDashboard() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
-  const [tab, setTab] = useState<"students" | "guests" | "arct" | "users" | "referrals" | "certificates" | "debrief" | "analytics" | "notifications">("students");
+  const [tab, setTab] = useState<"dashboard" | "students" | "guests" | "arct" | "users" | "referrals" | "certificates" | "debrief" | "analytics" | "notifications" | "inventory" | "scheduler">("dashboard");
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [guests, setGuests] = useState<Guest[]>([]);
   const [stats, setStats] = useState<Stats>({ total: 0, day1: 0, day2: 0 });
@@ -301,7 +304,8 @@ export function AdminDashboard() {
           </button>
         </div>
 
-        {/* Stats Cards */}
+        {/* Stats Cards (hidden on dashboard home since it has its own widgets) */}
+        {tab !== "dashboard" && (
         <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
           <div className="rounded-xl border border-gold/20 bg-white p-4">
             <div className="text-2xl font-semibold text-chocolate">{stats.total}</div>
@@ -320,9 +324,18 @@ export function AdminDashboard() {
             <div className="text-xs text-muted">Total Guests ({guestStats.day1}/{guestStats.day1Limit} D1, {guestStats.day2}/{guestStats.day2Limit} D2)</div>
           </div>
         </div>
+        )}
 
         {/* Tab Switcher */}
-        <div className="mb-4 flex gap-2">
+        <div className="mb-4 flex flex-wrap gap-2">
+          <button
+            onClick={() => setTab("dashboard")}
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+              tab === "dashboard" ? "bg-chocolate text-white" : "bg-white text-brown border border-gold/20"
+            }`}
+          >
+            Dashboard
+          </button>
           <button
             onClick={() => setTab("students")}
             className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
@@ -395,9 +408,33 @@ export function AdminDashboard() {
           >
             Alerts
           </button>
+          <button
+            onClick={() => setTab("inventory")}
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+              tab === "inventory" ? "bg-coral text-white" : "bg-white text-brown border border-gold/20"
+            }`}
+          >
+            Inventory
+          </button>
+          <button
+            onClick={() => setTab("scheduler")}
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+              tab === "scheduler" ? "bg-coral text-white" : "bg-white text-brown border border-gold/20"
+            }`}
+          >
+            Scheduler
+          </button>
         </div>
 
+        {/* Dashboard Home */}
+        {tab === "dashboard" && (
+          <Suspense fallback={<div className="py-8 text-center text-muted">Loading...</div>}>
+            <DashboardHome />
+          </Suspense>
+        )}
+
         {/* Search + Filter */}
+        {["students", "guests", "arct"].includes(tab) && (
         <div className="mb-4 flex flex-col gap-3 sm:flex-row">
           <input
             type="text"
@@ -428,6 +465,7 @@ export function AdminDashboard() {
             Search
           </button>
         </div>
+        )}
 
         {/* Students Table */}
         {tab === "students" && (
@@ -1031,6 +1069,20 @@ export function AdminDashboard() {
         {tab === "notifications" && (
           <Suspense fallback={<div className="py-8 text-center text-muted">Loading...</div>}>
             <NotificationsPanel />
+          </Suspense>
+        )}
+
+        {/* Inventory */}
+        {tab === "inventory" && (
+          <Suspense fallback={<div className="py-8 text-center text-muted">Loading...</div>}>
+            <InventoryPanel />
+          </Suspense>
+        )}
+
+        {/* Scheduler */}
+        {tab === "scheduler" && (
+          <Suspense fallback={<div className="py-8 text-center text-muted">Loading...</div>}>
+            <SchedulerPanel />
           </Suspense>
         )}
       </div>

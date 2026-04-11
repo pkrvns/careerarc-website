@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useForm } from "react-hook-form";
 
 /* ---------- Types ---------- */
@@ -27,7 +27,7 @@ interface Stats {
   recentActivity: ActivityItem[];
 }
 
-type ActiveView = "dashboard" | "register" | "feedback";
+type ActiveView = "dashboard" | "register" | "feedback" | "riasec" | "qrscanner";
 
 /* ---------- Career stream options ---------- */
 const CAREER_STREAMS = [
@@ -266,7 +266,7 @@ function Dashboard({ user }: { user: VolunteerUser }) {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 6.75h.75v.75h-.75v-.75zM6.75 16.5h.75v.75h-.75v-.75zM16.5 6.75h.75v.75H16.5v-.75zM13.5 13.5h.75v.75h-.75v-.75zM13.5 19.5h.75v.75h-.75v-.75zM19.5 13.5h.75v.75h-.75v-.75zM19.5 19.5h.75v.75h-.75v-.75zM16.5 16.5h.75v.75H16.5v-.75z" />
               </svg>
             }
-            onClick={() => showToast("QR Scanner coming soon")}
+            onClick={() => setActiveView("qrscanner")}
             color="gold"
           />
           <ActionButton
@@ -288,6 +288,16 @@ function Dashboard({ user }: { user: VolunteerUser }) {
             }
             onClick={() => setActiveView("feedback")}
             color="gold"
+          />
+          <ActionButton
+            label="RIASEC Test"
+            icon={
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15a2.25 2.25 0 012.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
+              </svg>
+            }
+            onClick={() => setActiveView("riasec")}
+            color="coral"
           />
           <ActionButton
             label="Activity Feed"
@@ -315,6 +325,21 @@ function Dashboard({ user }: { user: VolunteerUser }) {
 
       {activeView === "feedback" && (
         <FeedbackForm
+          onBack={() => setActiveView("dashboard")}
+          onSuccess={handleActionComplete}
+        />
+      )}
+
+      {activeView === "riasec" && (
+        <RiasecTest
+          onBack={() => setActiveView("dashboard")}
+          onSuccess={handleActionComplete}
+        />
+      )}
+
+      {activeView === "qrscanner" && (
+        <QRScannerView
+          volunteerName={user.name}
           onBack={() => setActiveView("dashboard")}
           onSuccess={handleActionComplete}
         />
@@ -645,6 +670,469 @@ function Field({ label, error, children }: { label: string; error?: string; chil
       <label className="block text-sm font-medium text-chocolate mb-1">{label}</label>
       {children}
       {error && <p className="text-coral text-xs mt-1">{error}</p>}
+    </div>
+  );
+}
+
+/* ========== RIASEC Test ========== */
+const RIASEC_QUESTIONS = [
+  { q: "Kya aapko machines ya tools se kaam karna achha lagta hai?", type: "R" as const },
+  { q: "Kya aap outdoor activities ya physical work enjoy karte hain?", type: "R" as const },
+  { q: "Kya aapko science experiments ya research mein interest hai?", type: "I" as const },
+  { q: "Kya aap problems ko analyse karke solve karna pasand karte hain?", type: "I" as const },
+  { q: "Kya aapko drawing, music, ya creative writing mein maja aata hai?", type: "A" as const },
+  { q: "Kya aap naye ideas sochna ya design karna enjoy karte hain?", type: "A" as const },
+  { q: "Kya aapko logon ki madad karna ya sikhana achha lagta hai?", type: "S" as const },
+  { q: "Kya aap teamwork aur group activities mein comfortable hain?", type: "S" as const },
+  { q: "Kya aapko lead karna ya logon ko motivate karna pasand hai?", type: "E" as const },
+  { q: "Kya aap apna business ya project start karna chahte hain?", type: "E" as const },
+  { q: "Kya aapko data organize karna ya records maintain karna achha lagta hai?", type: "C" as const },
+  { q: "Kya aap rules follow karna aur systematic kaam karna prefer karte hain?", type: "C" as const },
+];
+
+const RIASEC_LABELS: Record<string, { name: string; hindi: string; color: string }> = {
+  R: { name: "Realistic", hindi: "Vyavaharik (practical kaam)", color: "#e74c3c" },
+  I: { name: "Investigative", hindi: "Khoji (research / sochne waala)", color: "#3498db" },
+  A: { name: "Artistic", hindi: "Kalaaatmak (creative)", color: "#9b59b6" },
+  S: { name: "Social", hindi: "Samajik (logon ke saath)", color: "#2ecc71" },
+  E: { name: "Enterprising", hindi: "Udyami (leader / business)", color: "#f39c12" },
+  C: { name: "Conventional", hindi: "Paramparagat (organized / systematic)", color: "#1abc9c" },
+};
+
+const SCALE_LABELS = ["Bilkul Nahi", "Thoda", "Theek hai", "Haan", "Bilkul Haan"];
+
+function RiasecTest({ onBack, onSuccess }: { onBack: () => void; onSuccess: (msg: string) => void }) {
+  const [studentPhone, setStudentPhone] = useState("");
+  const [phoneConfirmed, setPhoneConfirmed] = useState(false);
+  const [answers, setAnswers] = useState<Record<number, number>>({});
+  const [result, setResult] = useState<{ scores: Record<string, number>; topTypes: string[] } | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleAnswer = (qIndex: number, value: number) => {
+    setAnswers((prev) => ({ ...prev, [qIndex]: value }));
+  };
+
+  const allAnswered = Object.keys(answers).length === 12;
+
+  const calculateResults = () => {
+    const raw: Record<string, number> = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
+    RIASEC_QUESTIONS.forEach((q, i) => {
+      raw[q.type] += answers[i] || 0;
+    });
+    // Max per type is 10 (2 questions * 5 max each)
+    const scores: Record<string, number> = {};
+    for (const key of Object.keys(raw)) {
+      scores[key] = Math.round((raw[key] / 10) * 100);
+    }
+    // Top 2 types
+    const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+    const topTypes = [sorted[0][0], sorted[1][0]];
+    setResult({ scores, topTypes });
+  };
+
+  const saveResult = async () => {
+    if (!result) return;
+    setSaving(true);
+    setError("");
+    try {
+      const res = await fetch("/api/volunteer/riasec", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          student_mobile: studentPhone,
+          scores: result.scores,
+          top_types: result.topTypes,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Failed to save");
+        return;
+      }
+      setSaved(true);
+      onSuccess(data.message || "RIASEC result saved");
+    } catch {
+      setError("Network error. Try again.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Step 1: Enter phone
+  if (!phoneConfirmed) {
+    return (
+      <div className="bg-white rounded-xl border border-gold/20 p-4">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-base font-semibold text-chocolate">RIASEC Test</h3>
+          <button onClick={onBack} className="text-xs text-muted hover:text-chocolate">Cancel</button>
+        </div>
+        <p className="text-sm text-body mb-3">Student ka phone number daalen:</p>
+        <input
+          type="tel"
+          inputMode="numeric"
+          maxLength={10}
+          value={studentPhone}
+          onChange={(e) => setStudentPhone(e.target.value.replace(/\D/g, ""))}
+          placeholder="9876543210"
+          className="w-full px-4 py-3 rounded-xl border border-gold/20 bg-ivory text-chocolate placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-gold/40 text-lg tracking-wider mb-3"
+        />
+        <button
+          onClick={() => { if (/^[6-9]\d{9}$/.test(studentPhone)) setPhoneConfirmed(true); else setError("Valid 10-digit number daalen"); }}
+          disabled={studentPhone.length !== 10}
+          className="w-full py-3 rounded-xl bg-coral text-white font-semibold text-sm hover:bg-coral-dark transition-colors disabled:opacity-50"
+        >
+          Start Test
+        </button>
+        {error && <p className="text-coral text-sm mt-2">{error}</p>}
+      </div>
+    );
+  }
+
+  // Step 3: Show results
+  if (result) {
+    return (
+      <div className="bg-white rounded-xl border border-gold/20 p-4">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-base font-semibold text-chocolate">RIASEC Result</h3>
+          <button onClick={onBack} className="text-xs text-muted hover:text-chocolate">Back</button>
+        </div>
+
+        {/* Bar Chart */}
+        <div className="space-y-3 mb-4">
+          {Object.entries(result.scores)
+            .sort((a, b) => b[1] - a[1])
+            .map(([type, pct]) => {
+              const info = RIASEC_LABELS[type];
+              const isTop = result.topTypes.includes(type);
+              return (
+                <div key={type}>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className={`text-sm font-medium ${isTop ? "text-chocolate" : "text-muted"}`}>
+                      {type} - {info.name} {isTop && "★"}
+                    </span>
+                    <span className="text-xs text-muted">{pct}%</span>
+                  </div>
+                  <div className="w-full bg-gray-100 rounded-full h-4 overflow-hidden">
+                    <div
+                      className="h-4 rounded-full transition-all duration-500"
+                      style={{ width: `${Math.max(pct, 2)}%`, backgroundColor: info.color }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+        </div>
+
+        {/* Top 2 highlight */}
+        <div className="bg-ivory rounded-xl p-3 mb-4">
+          <p className="text-sm font-semibold text-chocolate mb-2">Aapke Top Types:</p>
+          {result.topTypes.map((t) => {
+            const info = RIASEC_LABELS[t];
+            return (
+              <div key={t} className="flex items-center gap-2 mb-1.5">
+                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: info.color }} />
+                <span className="text-sm text-chocolate font-medium">{t} - {info.name}</span>
+                <span className="text-xs text-muted">({info.hindi})</span>
+              </div>
+            );
+          })}
+        </div>
+
+        {error && <p className="text-coral text-sm mb-2">{error}</p>}
+
+        {!saved ? (
+          <button
+            onClick={saveResult}
+            disabled={saving}
+            className="w-full py-3 rounded-xl bg-coral text-white font-semibold text-sm hover:bg-coral-dark transition-colors disabled:opacity-50"
+          >
+            {saving ? "Saving..." : "Save Result"}
+          </button>
+        ) : (
+          <p className="text-center text-sm text-zone-green font-medium">Result saved!</p>
+        )}
+      </div>
+    );
+  }
+
+  // Step 2: Questions
+  return (
+    <div className="bg-white rounded-xl border border-gold/20 p-4">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-base font-semibold text-chocolate">RIASEC Test</h3>
+        <button onClick={onBack} className="text-xs text-muted hover:text-chocolate">Cancel</button>
+      </div>
+      <p className="text-xs text-muted mb-4">
+        Phone: {studentPhone} &bull; {Object.keys(answers).length}/12 answered
+      </p>
+
+      <div className="space-y-5">
+        {RIASEC_QUESTIONS.map((q, i) => (
+          <div key={i} className="border-b border-gold/10 pb-4 last:border-0">
+            <p className="text-sm text-chocolate mb-2">
+              <span className="font-medium text-gold mr-1">Q{i + 1}.</span>
+              {q.q}
+            </p>
+            <div className="flex gap-1">
+              {SCALE_LABELS.map((label, val) => {
+                const score = val + 1;
+                const selected = answers[i] === score;
+                return (
+                  <button
+                    key={val}
+                    onClick={() => handleAnswer(i, score)}
+                    className={`flex-1 py-1.5 px-0.5 rounded-lg text-[10px] leading-tight font-medium transition-all border ${
+                      selected
+                        ? "bg-coral text-white border-coral"
+                        : "bg-ivory text-chocolate border-gold/20 hover:border-coral/40"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <button
+        onClick={calculateResults}
+        disabled={!allAnswered}
+        className="w-full py-3 mt-4 rounded-xl bg-coral text-white font-semibold text-sm hover:bg-coral-dark transition-colors disabled:opacity-50"
+      >
+        {allAnswered ? "See Result" : `${12 - Object.keys(answers).length} questions remaining`}
+      </button>
+    </div>
+  );
+}
+
+/* ========== QR Scanner View ========== */
+interface ScannedStudent {
+  id: number;
+  name: string;
+  institution: string;
+  mobile: string;
+  classYear: string;
+}
+
+function QRScannerView({
+  volunteerName,
+  onBack,
+  onSuccess,
+}: {
+  volunteerName: string;
+  onBack: () => void;
+  onSuccess: (msg: string) => void;
+}) {
+  const [scanning, setScanning] = useState(true);
+  const [scannedStudent, setScannedStudent] = useState<ScannedStudent | null>(null);
+  const [selectedPoint, setSelectedPoint] = useState<string | null>(null);
+  const [aadhaarConfirmed, setAadhaarConfirmed] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const scannerRef = useRef<HTMLDivElement>(null);
+  const html5QrCodeRef = useRef<unknown>(null);
+
+  // Start scanner
+  useEffect(() => {
+    if (!scanning) return;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let scanner: any = null;
+
+    const initScanner = async () => {
+      try {
+        const { Html5Qrcode } = await import("html5-qrcode");
+        if (!scannerRef.current) return;
+
+        scanner = new Html5Qrcode("qr-reader");
+        html5QrCodeRef.current = scanner;
+
+        await scanner.start(
+          { facingMode: "environment" },
+          { fps: 10, qrbox: { width: 250, height: 250 } },
+          async (decodedText: string) => {
+            // Stop scanner after successful scan
+            try {
+              await scanner.stop();
+            } catch { /* ignore */ }
+
+            setScanning(false);
+
+            // Look up student - QR might contain mobile number or student ID
+            try {
+              const isNumericId = /^\d+$/.test(decodedText) && decodedText.length < 10;
+              const isMobile = /^[6-9]\d{9}$/.test(decodedText);
+              const param = isNumericId ? `id=${decodedText}` : isMobile ? `mobile=${decodedText}` : `mobile=${decodedText}`;
+
+              const res = await fetch(`/api/volunteer/lookup?${param}`);
+              if (res.ok) {
+                const data = await res.json();
+                setScannedStudent(data);
+              } else {
+                setError(`Student not found for: ${decodedText}`);
+              }
+            } catch {
+              setError("Failed to look up student");
+            }
+          },
+          () => {
+            // QR scan error - ignore (continuous scanning)
+          }
+        );
+      } catch (err) {
+        console.error("Scanner init error:", err);
+        setError("Camera access denied or not available. Please allow camera permission.");
+        setScanning(false);
+      }
+    };
+
+    initScanner();
+
+    return () => {
+      if (scanner) {
+        scanner.stop().catch(() => {});
+        scanner.clear();
+      }
+    };
+  }, [scanning]);
+
+  const handleScan = async () => {
+    if (!scannedStudent || !selectedPoint) return;
+    if (selectedPoint === "Gate" && !aadhaarConfirmed) {
+      setError("Gate scan: Aadhaar check confirm karein");
+      return;
+    }
+
+    setSubmitting(true);
+    setError("");
+    try {
+      const res = await fetch("/api/volunteer/scan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          student_id: scannedStudent.id,
+          scan_point: selectedPoint,
+          scanned_by: volunteerName,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Scan failed");
+        return;
+      }
+      onSuccess(data.message || `Scan recorded at ${selectedPoint}`);
+    } catch {
+      setError("Network error. Try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const resetScanner = () => {
+    setScannedStudent(null);
+    setSelectedPoint(null);
+    setAadhaarConfirmed(false);
+    setError("");
+    setScanning(true);
+  };
+
+  const scanPoints = ["Gate", "RIASEC", "Counselling", "Institution"];
+  const scanPointColors: Record<string, string> = {
+    Gate: "bg-zone-blue/10 border-zone-blue/30 text-zone-blue",
+    RIASEC: "bg-zone-purple/10 border-zone-purple/30 text-zone-purple",
+    Counselling: "bg-zone-green/10 border-zone-green/30 text-zone-green",
+    Institution: "bg-gold/10 border-gold/30 text-gold-dark",
+  };
+
+  return (
+    <div className="bg-white rounded-xl border border-gold/20 p-4">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-base font-semibold text-chocolate">QR Scanner</h3>
+        <button onClick={onBack} className="text-xs text-muted hover:text-chocolate">Back</button>
+      </div>
+
+      {/* Camera view */}
+      {scanning && (
+        <div className="mb-4">
+          <div ref={scannerRef} id="qr-reader" className="rounded-xl overflow-hidden" />
+          <p className="text-xs text-muted text-center mt-2">Camera ko QR code ki taraf point karein</p>
+        </div>
+      )}
+
+      {/* Error */}
+      {error && (
+        <div className="bg-coral/10 border border-coral/20 rounded-xl p-3 mb-4">
+          <p className="text-sm text-coral">{error}</p>
+          {!scanning && (
+            <button onClick={resetScanner} className="text-xs text-coral underline mt-1">Scan again</button>
+          )}
+        </div>
+      )}
+
+      {/* Student info after scan */}
+      {scannedStudent && (
+        <>
+          <div className="bg-ivory rounded-xl p-3 mb-4">
+            <p className="text-sm font-semibold text-chocolate">{scannedStudent.name}</p>
+            <p className="text-xs text-muted">{scannedStudent.institution}</p>
+            <p className="text-xs text-muted">{scannedStudent.classYear} &bull; {scannedStudent.mobile}</p>
+          </div>
+
+          {/* Scan point selection */}
+          <p className="text-sm font-medium text-chocolate mb-2">Scan Point select karein:</p>
+          <div className="grid grid-cols-2 gap-2 mb-4">
+            {scanPoints.map((point) => (
+              <button
+                key={point}
+                onClick={() => { setSelectedPoint(point); setError(""); }}
+                className={`py-2.5 px-3 rounded-xl border text-sm font-medium transition-all ${
+                  selectedPoint === point
+                    ? "ring-2 ring-coral " + scanPointColors[point]
+                    : scanPointColors[point] + " opacity-70 hover:opacity-100"
+                }`}
+              >
+                {point}
+              </button>
+            ))}
+          </div>
+
+          {/* Aadhaar check for Gate */}
+          {selectedPoint === "Gate" && (
+            <div className="bg-ivory rounded-xl p-3 mb-4">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <div
+                  onClick={() => setAadhaarConfirmed(!aadhaarConfirmed)}
+                  className={`w-10 h-6 rounded-full transition-colors relative ${aadhaarConfirmed ? "bg-zone-green" : "bg-gray-300"}`}
+                >
+                  <div className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${aadhaarConfirmed ? "translate-x-[18px]" : "translate-x-0.5"}`} />
+                </div>
+                <span className="text-sm text-chocolate font-medium">Aadhaar check kiya?</span>
+              </label>
+            </div>
+          )}
+
+          {/* Submit */}
+          <div className="flex gap-2">
+            <button
+              onClick={resetScanner}
+              className="flex-1 py-3 rounded-xl border border-gold/20 text-chocolate text-sm font-medium hover:bg-ivory transition-colors"
+            >
+              Scan Again
+            </button>
+            <button
+              onClick={handleScan}
+              disabled={!selectedPoint || submitting || (selectedPoint === "Gate" && !aadhaarConfirmed)}
+              className="flex-1 py-3 rounded-xl bg-coral text-white font-semibold text-sm hover:bg-coral-dark transition-colors disabled:opacity-50"
+            >
+              {submitting ? "Recording..." : "Record Scan"}
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }
