@@ -40,7 +40,7 @@ export async function POST(request: Request) {
       phone: user.phone,
       role: user.role,
     }), {
-      httpOnly: false,
+      httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       maxAge: 60 * 60 * 12, // 12 hours

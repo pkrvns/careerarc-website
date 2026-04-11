@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
-const JWT_SECRET = process.env.JWT_SECRET || "careerarc-admin-secret-change-me";
+const JWT_SECRET = process.env.JWT_SECRET || "careerarc-jwt-" + (process.env.POSTGRES_URL?.slice(-12) || "default-dev-only");
 
 // Admin users — in production, move to database
 const ADMIN_USERS = [

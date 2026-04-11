@@ -43,7 +43,7 @@ export async function POST(request: Request) {
         cabinId: user.cabin_id,
       }),
       {
-        httpOnly: false,
+        httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
         maxAge: 60 * 60 * 12, // 12 hours

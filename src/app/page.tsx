@@ -1,7 +1,14 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { HOW_IT_WORKS, CAREER_STREAMS, UNDERSTANDING_ZONES, SCHEDULE } from "@/lib/constants";
 import { LiveCounter } from "@/components/LiveCounter";
+
+export const metadata: Metadata = {
+  title: "CareerArc — Free Career Kit + Personal Guidance for 3,000+ Students",
+  description:
+    "Get your FREE Career Kit and personal career guidance at CareerArc. Honest, unbiased career guidance for students in Varanasi and eastern UP. BITE Campus.",
+};
 
 const prizes = [
   { icon: "💻", title: "1 Laptop", rank: "Grand Prize" },
@@ -156,9 +163,9 @@ export default function Home() {
             13 zones. 13 letters. Complete the word.
           </p>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
-            {UNDERSTANDING_ZONES.map((zone, i) => (
+            {UNDERSTANDING_ZONES.map((zone) => (
               <div
-                key={i}
+                key={zone.letter}
                 className="flex flex-col items-center rounded-xl border border-gold/20 bg-white p-5 text-center"
               >
                 <div
@@ -216,8 +223,8 @@ export default function Home() {
             Your 3.5-Hour Journey
           </h2>
           <div className="space-y-5">
-            {SCHEDULE.map((item, i) => (
-              <div key={i} className="flex items-start gap-3 md:gap-4">
+            {SCHEDULE.map((item) => (
+              <div key={item.time} className="flex items-start gap-3 md:gap-4">
                 <div className="w-[70px] shrink-0 rounded-lg bg-gold/10 px-2 py-1.5 text-center text-xs font-semibold text-gold md:w-[80px] md:text-sm">
                   {item.time}
                 </div>

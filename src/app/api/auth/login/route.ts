@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
 import { generateToken } from "@/lib/auth";
 
 // Default admin credentials — override with env vars

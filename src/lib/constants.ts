@@ -9,7 +9,7 @@ export const WHATSAPP_LINK = "https://wa.me/919151807551";
 export const SOCIAL_LINKS = {
   instagram: "https://instagram.com/careerarc_academy",
   facebook: "https://facebook.com/share/1CQibb1a6z/",
-  twitter: "#",
+  twitter: "",
 };
 
 export const NAV_LINKS = [
