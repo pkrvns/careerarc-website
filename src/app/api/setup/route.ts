@@ -215,7 +215,7 @@ export async function GET() {
 
     // Notifications table
     await db.sql`
-      CREATE TABLE IF NOT EXISTS notifications (
+      CREATE TABLE IF NOT EXISTS user_notifications (
         id SERIAL PRIMARY KEY,
         user_name VARCHAR(255),
         type VARCHAR(50) NOT NULL,
