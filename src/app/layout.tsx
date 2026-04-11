@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 
 const poppins = Poppins({
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
     template: "%s | CareerArc",
   },
   description:
-    "CareerArc — Career guidance for every student. ARC-T 2.0 Recognition & Guidance Day — 25-26 April 2026, BITE Campus, Varanasi.",
+    "CareerArc — Free Career Kit + personal career guidance for students in Varanasi and eastern UP. BITE Campus.",
   metadataBase: new URL("https://careerarc.academy"),
   openGraph: {
     type: "website",
@@ -27,14 +28,14 @@ export const metadata: Metadata = {
     siteName: "CareerArc",
     title: "CareerArc — Career Guidance for Varanasi Students",
     description:
-      "ARC-T 2.0 Recognition & Guidance Day. 13 zones. Career guidance. Exciting prizes. Free for all registered students.",
+      "Free Career Kit + personal career guidance for 3,000+ students. BITE Campus, Varanasi.",
     images: [{ url: "/logos/arct-logo.svg", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
     title: "CareerArc — Career Guidance for Varanasi Students",
     description:
-      "ARC-T 2.0 Recognition & Guidance Day — 25-26 April 2026, BITE Campus, Varanasi.",
+      "Free Career Kit + personal career guidance. BITE Campus, Varanasi.",
   },
   robots: { index: true, follow: true },
   manifest: "/manifest.json",
@@ -52,6 +53,7 @@ export default function RootLayout({
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />
+        <WhatsAppButton />
       </body>
     </html>
   );

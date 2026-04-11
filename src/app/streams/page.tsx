@@ -39,7 +39,9 @@ export default function StreamsPage() {
                 className="flex items-center gap-4 px-6 py-4"
                 style={{ backgroundColor: stream.color + "12" }}
               >
-                <span className="text-3xl">{stream.icon}</span>
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white" style={{ backgroundColor: stream.color }}>
+                  {stream.name.charAt(0)}
+                </div>
                 <div>
                   <h2 className="text-xl font-semibold text-chocolate">{stream.name}</h2>
                   <span className="text-sm font-medium" style={{ color: stream.color }}>
@@ -97,7 +99,7 @@ export default function StreamsPage() {
             guidance based on your aptitude, interests, and goals.
           </p>
           <Link
-            href="/register"
+            href="/book"
             className="inline-block rounded-lg bg-coral px-8 py-3 text-base font-medium text-white transition-colors hover:bg-coral-dark"
           >
             Book Your Free Session

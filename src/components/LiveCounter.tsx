@@ -31,9 +31,11 @@ export function LiveCounter() {
         </div>
         <div>
           <div className="text-[28px] font-semibold text-chocolate md:text-4xl">
-            {stats.registered > 0 ? stats.registered.toLocaleString() : "0"}
+            {stats.registered > 0 ? stats.registered.toLocaleString() : "Coming May"}
           </div>
-          <div className="text-sm text-muted">Sessions Booked</div>
+          <div className="text-sm text-muted">
+            {stats.registered > 0 ? "Sessions Booked" : "Sessions Open"}
+          </div>
         </div>
         <div>
           <div className="text-[28px] font-semibold text-chocolate md:text-4xl">

@@ -14,10 +14,10 @@ export const SOCIAL_LINKS = {
 
 export const NAV_LINKS = [
   { label: "Home", href: "/" },
-  { label: "Career Streams", href: "/streams" },
+  { label: "Streams", href: "/streams" },
   { label: "Testimonials", href: "/testimonials" },
   { label: "About", href: "/about" },
-  { label: "ARC-T 2.0", href: "/arct2" },
+  { label: "Book Session", href: "/book" },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -110,9 +110,9 @@ export const LEADERSHIP = [
 ];
 
 export const HOW_IT_WORKS = [
-  { step: 1, title: "Book", desc: "Register online with your phone number. Pick a date and shift." },
+  { step: 1, title: "Book", desc: "Register with your phone number. Verify via OTP. Pick a date." },
   { step: 2, title: "Visit", desc: "Come to BITE Campus with your Aadhaar. Get your QR code at the gate." },
-  { step: 3, title: "Discover", desc: "Explore 13 career zones, take tests, get personalised guidance." },
+  { step: 3, title: "Discover", desc: "Meet your Career Guide. Get your Career Kit — bag, notebook, test report, career plan, handouts, scholarship guide, and certificate." },
 ];
 
 export const CAREER_STREAMS = [

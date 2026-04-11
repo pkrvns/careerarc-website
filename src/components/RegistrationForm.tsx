@@ -129,7 +129,7 @@ export function RegistrationForm() {
     setValue,
     formState: { errors },
   } = useForm<FormData>({
-    defaultValues: { parentAttending: false, hasSmartphone: true, preferredDate: "day1", streamInterest: "" },
+    defaultValues: { parentAttending: false, hasSmartphone: true, preferredDate: "", streamInterest: "" },
   });
 
   const parentAttending = watch("parentAttending");
@@ -173,7 +173,7 @@ export function RegistrationForm() {
         setServerError(result.error || "Something went wrong");
         return;
       }
-      setAllocatedDate(data.preferredDate === "day1" ? "Day 1 (25 April)" : "Day 2 (26 April)");
+      setAllocatedDate(data.preferredDate);
       setRegistered(true);
     } catch {
       setServerError("Network error. Please try again.");
@@ -185,7 +185,9 @@ export function RegistrationForm() {
   if (registered) {
     return (
       <div className="rounded-xl border border-gold/20 bg-white p-8 text-center">
-        <div className="mb-4 text-5xl">🎉</div>
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gold/10">
+          <svg className="h-7 w-7 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+        </div>
         <h2 className="mb-2 text-xl font-semibold text-chocolate">
           Session Booked!
         </h2>
@@ -193,9 +195,9 @@ export function RegistrationForm() {
           Your date: <strong>{allocatedDate}</strong>. Save this page or take a
           screenshot.
         </p>
-        <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-4">
-          <p className="text-sm font-semibold text-amber-800">🪪 Aadhaar Card ZAROORI hai!</p>
-          <p className="mt-1 text-xs text-amber-700">Event ke din Aadhaar Card zaroor laayen.</p>
+        <div className="mb-4 rounded-lg border-2 border-red-500 bg-red-50 p-4">
+          <p className="text-base font-bold text-red-700">ZAROORI: Aadhaar Card laayen!</p>
+          <p className="mt-1 text-sm font-semibold text-red-600">Bina Aadhaar entry nahi milegi.</p>
         </div>
         <div className="mb-6 rounded-lg bg-cream p-4">
           <p className="text-xs text-muted">Your QR Code will be sent via WhatsApp</p>
@@ -332,26 +334,17 @@ export function RegistrationForm() {
         <label className="mb-1.5 block text-sm font-medium text-chocolate">
           Preferred Date <span className="text-coral">*</span>
         </label>
-        <div className="flex gap-4">
-          <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-300 px-4 py-2.5 has-[:checked]:border-gold has-[:checked]:bg-gold/5">
-            <input
-              {...register("preferredDate", { required: true })}
-              type="radio"
-              value="day1"
-              className="accent-gold"
-            />
-            <span className="text-sm text-chocolate">Day 1 (25 Apr)</span>
-          </label>
-          <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-300 px-4 py-2.5 has-[:checked]:border-gold has-[:checked]:bg-gold/5">
-            <input
-              {...register("preferredDate", { required: true })}
-              type="radio"
-              value="day2"
-              className="accent-gold"
-            />
-            <span className="text-sm text-chocolate">Day 2 (26 Apr)</span>
-          </label>
-        </div>
+        <input
+          {...register("preferredDate", { required: "Please select a date" })}
+          type="date"
+          min="2026-05-01"
+          max="2026-07-31"
+          className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-chocolate focus:border-gold focus:ring-1 focus:ring-gold focus:outline-none"
+        />
+        <p className="mt-1 text-xs text-muted">Daily sessions: 2:00 PM &ndash; 4:00 PM at BITE Campus</p>
+        {errors.preferredDate && (
+          <p className="mt-1 text-xs text-red-500">{errors.preferredDate.message}</p>
+        )}
       </div>
 
       {/* Parent Attending */}
@@ -446,7 +439,7 @@ export function RegistrationForm() {
       {/* Aadhaar Reminder */}
       <div className="mb-5 rounded-lg border border-amber-200 bg-amber-50 p-4">
         <div className="flex items-start gap-3">
-          <span className="text-xl">🪪</span>
+          <svg className="h-5 w-5 shrink-0 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Zm6-10.125a1.875 1.875 0 1 1-3.75 0 1.875 1.875 0 0 1 3.75 0Zm1.294 6.336a6.721 6.721 0 0 1-3.17.789 6.721 6.721 0 0 1-3.168-.789 3.376 3.376 0 0 1 6.338 0Z" /></svg>
           <div>
             <p className="text-sm font-semibold text-amber-800">Aadhaar Card ZAROORI hai!</p>
             <p className="mt-1 text-xs text-amber-700">

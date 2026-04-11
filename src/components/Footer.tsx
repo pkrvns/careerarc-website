@@ -11,7 +11,7 @@ export function Footer() {
           Ready to begin your journey?
         </h2>
         <Link
-          href="/register"
+          href="/book"
           className="inline-block rounded-lg bg-coral px-8 py-3 text-base font-medium text-white transition-colors hover:bg-coral-dark"
         >
           Register Now

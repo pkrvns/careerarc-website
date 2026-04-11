@@ -26,7 +26,9 @@ export default function TestimonialsPage() {
       <section className="bg-white px-4 py-16 md:py-20">
         <div className="mx-auto max-w-[900px]">
           <div className="rounded-xl border border-gold/20 bg-ivory p-12 text-center">
-            <div className="mb-4 text-5xl">🎬</div>
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gold/10">
+              <svg className="h-7 w-7 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z" /></svg>
+            </div>
             <h2 className="mb-3 text-xl font-semibold text-chocolate">
               Video Testimonials Coming Soon
             </h2>
@@ -62,7 +64,7 @@ export default function TestimonialsPage() {
             Book your free career guidance session and get your Career Kit today.
           </p>
           <Link
-            href="/register"
+            href="/book"
             className="inline-block rounded-lg bg-coral px-8 py-3 text-base font-medium text-white transition-colors hover:bg-coral-dark"
           >
             Get Your Free Career Kit

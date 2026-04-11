@@ -46,12 +46,12 @@ export function Navbar() {
         </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden items-center gap-6 md:flex">
+        <div className="hidden items-center gap-4 lg:flex lg:gap-5">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="text-[15px] font-normal text-brown transition-colors hover:text-chocolate"
+              className="whitespace-nowrap text-[13px] font-normal text-brown transition-colors hover:text-chocolate lg:text-[15px]"
             >
               {link.label}
             </Link>
@@ -60,16 +60,16 @@ export function Navbar() {
 
         {/* Desktop CTA */}
         <Link
-          href="/register"
-          className="hidden rounded-full bg-gold px-5 py-2 text-[15px] font-medium text-white transition-colors hover:bg-gold-dark md:inline-block"
+          href="/book"
+          className="hidden shrink-0 whitespace-nowrap rounded-lg bg-coral px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-coral-dark lg:ml-4 lg:inline-block"
         >
-          Get Career Kit
+          Career Kit
         </Link>
 
         {/* Mobile Hamburger */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="flex h-11 w-11 items-center justify-center md:hidden"
+          className="flex h-11 w-11 items-center justify-center lg:hidden"
           aria-label="Toggle menu"
         >
           <div className="flex flex-col gap-1.5">
@@ -94,7 +94,7 @@ export function Navbar() {
 
       {/* Mobile Menu Overlay */}
       {menuOpen && (
-        <div className="fixed inset-0 top-[60px] z-40 bg-ivory md:hidden">
+        <div className="fixed inset-0 top-[60px] z-40 bg-ivory lg:hidden">
           <div className="flex flex-col items-center gap-6 px-6 pt-10">
             {NAV_LINKS.map((link) => (
               <Link
@@ -107,7 +107,7 @@ export function Navbar() {
               </Link>
             ))}
             <Link
-              href="/register"
+              href="/book"
               onClick={() => setMenuOpen(false)}
               className="mt-4 rounded-lg bg-coral px-8 py-3 text-base font-medium text-white transition-colors hover:bg-coral-dark"
             >

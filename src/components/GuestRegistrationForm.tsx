@@ -60,7 +60,9 @@ export function GuestRegistrationForm() {
   if (registered) {
     return (
       <div className="rounded-xl border border-gold/20 bg-white p-8 text-center">
-        <div className="mb-4 text-5xl">🎉</div>
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gold/10">
+          <svg className="h-7 w-7 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+        </div>
         <h2 className="mb-2 text-xl font-semibold text-chocolate">
           Guest Pass Confirmed!
         </h2>
