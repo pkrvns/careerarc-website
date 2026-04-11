@@ -110,6 +110,48 @@ export async function GET() {
       )
     `;
 
+    // Portal users table (volunteers, counsellors, reps, coordinators)
+    await db.sql`
+      CREATE TABLE IF NOT EXISTS portal_users (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        phone VARCHAR(15) NOT NULL UNIQUE,
+        role VARCHAR(50) NOT NULL,
+        department VARCHAR(100),
+        cabin_id VARCHAR(10),
+        specialization TEXT,
+        is_active BOOLEAN DEFAULT TRUE,
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `;
+
+    // Activity log
+    await db.sql`
+      CREATE TABLE IF NOT EXISTS activity_log (
+        id SERIAL PRIMARY KEY,
+        user_name VARCHAR(255),
+        action VARCHAR(255) NOT NULL,
+        entity_type VARCHAR(50),
+        entity_id INTEGER,
+        metadata TEXT,
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `;
+
+    // Counselling schedules
+    await db.sql`
+      CREATE TABLE IF NOT EXISTS schedules (
+        id SERIAL PRIMARY KEY,
+        schedule_date DATE NOT NULL,
+        shift_time VARCHAR(50) NOT NULL,
+        counsellor_name VARCHAR(255),
+        cabin_id VARCHAR(10),
+        max_students INTEGER DEFAULT 8,
+        booked_count INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `;
+
     return NextResponse.json({
       success: true,
       message: "All database tables created successfully",

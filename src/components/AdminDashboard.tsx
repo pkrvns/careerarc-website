@@ -45,7 +45,7 @@ export function AdminDashboard() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
-  const [tab, setTab] = useState<"students" | "guests" | "arct">("students");
+  const [tab, setTab] = useState<"students" | "guests" | "arct" | "users" | "referrals">("students");
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [guests, setGuests] = useState<Guest[]>([]);
   const [stats, setStats] = useState<Stats>({ total: 0, day1: 0, day2: 0 });
@@ -70,6 +70,15 @@ export function AdminDashboard() {
   const [arctLoading, setArctLoading] = useState(false);
   const [importing, setImporting] = useState(false);
   const [importResult, setImportResult] = useState("");
+  // User management state
+  type PortalUser = { id: number; name: string; phone: string; role: string; department: string; cabin_id: string; is_active: boolean };
+  const [portalUsers, setPortalUsers] = useState<PortalUser[]>([]);
+  const [showAddUser, setShowAddUser] = useState(false);
+  const [newUser, setNewUser] = useState({ name: "", phone: "", role: "volunteer", department: "", cabin_id: "" });
+  // Referral state
+  type Referral = { id: number; ref_code: string; student_name: string; student_phone: string; counsellor_name: string; institution: string; programme: string; status: string; created_at: string };
+  const [referrals, setReferrals] = useState<Referral[]>([]);
+  const [referralStats, setReferralStats] = useState({ total: 0, reached: 0, crm: 0, admission: 0 });
 
   const login = async () => {
     setLoginError("");
@@ -134,12 +143,35 @@ export function AdminDashboard() {
     setArctLoading(false);
   }, [arctSearch, arctStatusFilter, arctInstFilter]);
 
+  const fetchPortalUsers = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/portal-users");
+      if (res.ok) {
+        const data = await res.json();
+        setPortalUsers(data.users);
+      }
+    } catch { /* ignore */ }
+  }, []);
+
+  const fetchReferrals = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/referrals");
+      if (res.ok) {
+        const data = await res.json();
+        setReferrals(data.referrals);
+        setReferralStats(data.stats);
+      }
+    } catch { /* ignore */ }
+  }, []);
+
   useEffect(() => {
     if (!loggedIn) return;
     fetchRegistrations();
     fetchGuests();
     fetchArctParticipants();
-  }, [loggedIn, fetchRegistrations, fetchGuests, fetchArctParticipants]);
+    fetchPortalUsers();
+    fetchReferrals();
+  }, [loggedIn, fetchRegistrations, fetchGuests, fetchArctParticipants, fetchPortalUsers, fetchReferrals]);
 
   const saveEdit = async (id: number) => {
     await fetch("/api/admin/registrations", {
@@ -309,6 +341,22 @@ export function AdminDashboard() {
             }`}
           >
             ARC-T Data ({arctStats.total})
+          </button>
+          <button
+            onClick={() => setTab("users")}
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+              tab === "users" ? "bg-coral text-white" : "bg-white text-brown border border-gold/20"
+            }`}
+          >
+            Users ({portalUsers.length})
+          </button>
+          <button
+            onClick={() => setTab("referrals")}
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+              tab === "referrals" ? "bg-coral text-white" : "bg-white text-brown border border-gold/20"
+            }`}
+          >
+            Referrals ({referralStats.total})
           </button>
         </div>
 
@@ -625,6 +673,254 @@ export function AdminDashboard() {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {/* Portal Users Management */}
+        {tab === "users" && (
+          <div>
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-chocolate">Portal Users</h2>
+              <button
+                onClick={() => setShowAddUser(!showAddUser)}
+                className="rounded-lg bg-coral px-4 py-2 text-sm font-medium text-white hover:bg-coral-dark"
+              >
+                {showAddUser ? "Cancel" : "+ Add User"}
+              </button>
+            </div>
+
+            {showAddUser && (
+              <div className="mb-4 rounded-xl border border-gold/20 bg-white p-6">
+                <div className="grid gap-4 md:grid-cols-3">
+                  <div>
+                    <label className="mb-1 block text-xs font-medium text-chocolate">Name</label>
+                    <input value={newUser.name} onChange={(e) => setNewUser({ ...newUser, name: e.target.value })} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gold" placeholder="Full name" />
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-xs font-medium text-chocolate">Phone</label>
+                    <input value={newUser.phone} onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gold" placeholder="10-digit" maxLength={10} />
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-xs font-medium text-chocolate">Role</label>
+                    <select value={newUser.role} onChange={(e) => setNewUser({ ...newUser, role: e.target.value })} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gold">
+                      <option value="volunteer">Volunteer</option>
+                      <option value="counsellor">Counsellor</option>
+                      <option value="rep">Institution Rep</option>
+                      <option value="coordinator">Coordinator</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-xs font-medium text-chocolate">Department / Institution</label>
+                    <input value={newUser.department} onChange={(e) => setNewUser({ ...newUser, department: e.target.value })} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gold" placeholder="e.g. B.Ed / BITE / BIPE" />
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-xs font-medium text-chocolate">Cabin ID (counsellors only)</label>
+                    <input value={newUser.cabin_id} onChange={(e) => setNewUser({ ...newUser, cabin_id: e.target.value })} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gold" placeholder="e.g. C1, C2" />
+                  </div>
+                  <div className="flex items-end">
+                    <button
+                      onClick={async () => {
+                        if (!newUser.name || !newUser.phone) return;
+                        await fetch("/api/admin/portal-users", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(newUser) });
+                        setNewUser({ name: "", phone: "", role: "volunteer", department: "", cabin_id: "" });
+                        setShowAddUser(false);
+                        fetchPortalUsers();
+                      }}
+                      className="rounded-lg bg-gold px-6 py-2 text-sm font-medium text-white hover:bg-gold-dark"
+                    >
+                      Add User
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="mb-4 grid grid-cols-2 gap-4 md:grid-cols-4">
+              <div className="rounded-xl border border-gold/20 bg-white p-4">
+                <div className="text-2xl font-semibold text-chocolate">{portalUsers.filter(u => u.role === "volunteer").length}</div>
+                <div className="text-xs text-muted">Volunteers</div>
+              </div>
+              <div className="rounded-xl border border-gold/20 bg-white p-4">
+                <div className="text-2xl font-semibold text-chocolate">{portalUsers.filter(u => u.role === "counsellor").length}</div>
+                <div className="text-xs text-muted">Counsellors</div>
+              </div>
+              <div className="rounded-xl border border-gold/20 bg-white p-4">
+                <div className="text-2xl font-semibold text-chocolate">{portalUsers.filter(u => u.role === "rep").length}</div>
+                <div className="text-xs text-muted">Institution Reps</div>
+              </div>
+              <div className="rounded-xl border border-gold/20 bg-white p-4">
+                <div className="text-2xl font-semibold text-chocolate">{portalUsers.filter(u => u.role === "coordinator").length}</div>
+                <div className="text-xs text-muted">Coordinators</div>
+              </div>
+            </div>
+
+            <div className="overflow-x-auto rounded-xl border border-gold/20 bg-white">
+              <table className="w-full text-left text-sm">
+                <thead className="border-b border-gold/10 bg-cream">
+                  <tr>
+                    <th className="px-4 py-3 font-medium text-chocolate">#</th>
+                    <th className="px-4 py-3 font-medium text-chocolate">Name</th>
+                    <th className="px-4 py-3 font-medium text-chocolate">Phone</th>
+                    <th className="px-4 py-3 font-medium text-chocolate">Role</th>
+                    <th className="px-4 py-3 font-medium text-chocolate">Department</th>
+                    <th className="px-4 py-3 font-medium text-chocolate">Cabin</th>
+                    <th className="px-4 py-3 font-medium text-chocolate">Status</th>
+                    <th className="px-4 py-3 font-medium text-chocolate">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {portalUsers.length === 0 ? (
+                    <tr><td colSpan={8} className="px-4 py-8 text-center text-muted">No portal users yet. Add volunteers, counsellors, and reps above.</td></tr>
+                  ) : (
+                    portalUsers.map((u, i) => (
+                      <tr key={u.id} className="border-b border-gold/5 hover:bg-ivory/50">
+                        <td className="px-4 py-3 text-muted">{i + 1}</td>
+                        <td className="px-4 py-3 font-medium text-chocolate">{u.name}</td>
+                        <td className="px-4 py-3">{u.phone}</td>
+                        <td className="px-4 py-3">
+                          <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                            u.role === "counsellor" ? "bg-blue-50 text-blue-700" :
+                            u.role === "volunteer" ? "bg-green-50 text-green-700" :
+                            u.role === "rep" ? "bg-purple-50 text-purple-700" :
+                            "bg-amber-50 text-amber-700"
+                          }`}>
+                            {u.role}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-xs">{u.department || "—"}</td>
+                        <td className="px-4 py-3">{u.cabin_id || "—"}</td>
+                        <td className="px-4 py-3">
+                          <span className={`rounded-full px-2 py-0.5 text-xs ${u.is_active ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}>
+                            {u.is_active ? "Active" : "Disabled"}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex gap-2">
+                            <button
+                              onClick={async () => {
+                                await fetch("/api/admin/portal-users", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: u.id, is_active: !u.is_active }) });
+                                fetchPortalUsers();
+                              }}
+                              className="text-xs text-gold hover:underline"
+                            >
+                              {u.is_active ? "Disable" : "Enable"}
+                            </button>
+                            <button
+                              onClick={async () => {
+                                if (!confirm("Delete this user?")) return;
+                                await fetch(`/api/admin/portal-users?id=${u.id}`, { method: "DELETE" });
+                                fetchPortalUsers();
+                              }}
+                              className="text-xs text-red-500 hover:underline"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* Referral Funnel */}
+        {tab === "referrals" && (
+          <div>
+            <div className="mb-4 grid grid-cols-2 gap-4 md:grid-cols-4">
+              <div className="rounded-xl border border-gold/20 bg-white p-4">
+                <div className="text-2xl font-semibold text-chocolate">{referralStats.total}</div>
+                <div className="text-xs text-muted">Total Referrals</div>
+              </div>
+              <div className="rounded-xl border border-gold/20 bg-white p-4">
+                <div className="text-2xl font-semibold text-amber-600">{referralStats.reached}</div>
+                <div className="text-xs text-muted">Reached</div>
+              </div>
+              <div className="rounded-xl border border-gold/20 bg-white p-4">
+                <div className="text-2xl font-semibold text-purple-600">{referralStats.crm}</div>
+                <div className="text-xs text-muted">CRM</div>
+              </div>
+              <div className="rounded-xl border border-gold/20 bg-white p-4">
+                <div className="text-2xl font-semibold text-green-600">{referralStats.admission}</div>
+                <div className="text-xs text-muted">Admission</div>
+              </div>
+            </div>
+
+            {/* Funnel Visualization */}
+            <div className="mb-4 rounded-xl border border-gold/20 bg-white p-6">
+              <h3 className="mb-4 text-sm font-semibold text-chocolate">Admission Funnel</h3>
+              <div className="space-y-3">
+                {[
+                  { label: "Reference", count: referralStats.total, color: "bg-blue-500" },
+                  { label: "Reached", count: referralStats.reached, color: "bg-amber-500" },
+                  { label: "CRM", count: referralStats.crm, color: "bg-purple-500" },
+                  { label: "Admission", count: referralStats.admission, color: "bg-green-500" },
+                ].map((stage) => (
+                  <div key={stage.label} className="flex items-center gap-3">
+                    <div className="w-20 text-xs font-medium text-chocolate">{stage.label}</div>
+                    <div className="flex-1">
+                      <div className="h-6 rounded-full bg-gray-100">
+                        <div
+                          className={`h-6 rounded-full ${stage.color} flex items-center px-2 text-xs font-medium text-white`}
+                          style={{ width: `${referralStats.total > 0 ? Math.max(5, (stage.count / referralStats.total) * 100) : 0}%` }}
+                        >
+                          {stage.count}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="w-12 text-right text-xs text-muted">
+                      {referralStats.total > 0 ? Math.round((stage.count / referralStats.total) * 100) : 0}%
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="overflow-x-auto rounded-xl border border-gold/20 bg-white">
+              <table className="w-full text-left text-sm">
+                <thead className="border-b border-gold/10 bg-cream">
+                  <tr>
+                    <th className="px-4 py-3 font-medium text-chocolate">Ref Code</th>
+                    <th className="px-4 py-3 font-medium text-chocolate">Student</th>
+                    <th className="px-4 py-3 font-medium text-chocolate">Phone</th>
+                    <th className="px-4 py-3 font-medium text-chocolate">Counsellor</th>
+                    <th className="px-4 py-3 font-medium text-chocolate">Institution</th>
+                    <th className="px-4 py-3 font-medium text-chocolate">Programme</th>
+                    <th className="px-4 py-3 font-medium text-chocolate">Status</th>
+                    <th className="px-4 py-3 font-medium text-chocolate">Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {referrals.length === 0 ? (
+                    <tr><td colSpan={8} className="px-4 py-8 text-center text-muted">No referral slips yet</td></tr>
+                  ) : (
+                    referrals.map((r) => (
+                      <tr key={r.id} className="border-b border-gold/5 hover:bg-ivory/50">
+                        <td className="px-4 py-3 font-mono text-xs font-semibold text-chocolate">{r.ref_code}</td>
+                        <td className="px-4 py-3 font-medium text-chocolate">{r.student_name || "—"}</td>
+                        <td className="px-4 py-3">{r.student_phone || "—"}</td>
+                        <td className="px-4 py-3 text-xs">{r.counsellor_name}</td>
+                        <td className="px-4 py-3 text-xs">{r.institution}</td>
+                        <td className="px-4 py-3 text-xs">{r.programme}</td>
+                        <td className="px-4 py-3">
+                          <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                            r.status === "admission" ? "bg-green-50 text-green-700" :
+                            r.status === "crm" ? "bg-purple-50 text-purple-700" :
+                            r.status === "reached" ? "bg-amber-50 text-amber-700" :
+                            "bg-blue-50 text-blue-700"
+                          }`}>
+                            {r.status.toUpperCase()}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-xs text-muted">{new Date(r.created_at).toLocaleDateString()}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
 
