@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { RegistrationTabs } from "@/components/RegistrationTabs";
 
 export const metadata: Metadata = {
-  title: "Register for ARC-T 2.0",
+  title: "Book Your Free Session",
   description:
-    "Register for ARC-T 2.0 Recognition & Guidance Day — 25-26 April 2026. Free career guidance event at BITE Campus, Varanasi.",
+    "Book your free career counselling session at CareerArc. ARC-T 2.0 Recognition & Guidance Day — 25-26 April 2026, BITE Campus, Varanasi.",
 };
 
 export default function RegisterPage() {
@@ -16,11 +16,11 @@ export default function RegisterPage() {
             Free Registration
           </span>
           <h1 className="mb-2 text-[28px] font-semibold text-chocolate md:text-4xl">
-            Register for ARC-T 2.0
+            Book Your Free Session
           </h1>
           <p className="text-sm text-body">
-            Recognition &amp; Guidance Day &mdash; 25-26 April 2026, BITE
-            Campus, Varanasi
+            Career counselling at BITE Campus, Varanasi.
+            Pick your date, bring your Aadhaar, and discover your career path.
           </p>
         </div>
         <RegistrationTabs />

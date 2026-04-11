@@ -1,13 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
-import { UNDERSTANDING_ZONES, SCHEDULE } from "@/lib/constants";
-
-const stats = [
-  { value: "3,014", label: "Students Tested" },
-  { value: "80+", label: "Institutions" },
-  { value: "13", label: "Career Zones" },
-  { value: "2,000", label: "Spots Available" },
-];
+import { HOW_IT_WORKS, CAREER_STREAMS, UNDERSTANDING_ZONES, SCHEDULE } from "@/lib/constants";
+import { LiveCounter } from "@/components/LiveCounter";
 
 const prizes = [
   { icon: "💻", title: "1 Laptop", rank: "Grand Prize" },
@@ -22,11 +16,6 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative flex min-h-[90vh] items-center justify-center bg-gradient-to-b from-ivory to-cream px-4 pt-20 md:pt-24">
         <div className="mx-auto max-w-[800px] text-center">
-          {/* Event Badge */}
-          <span className="mb-6 inline-block rounded-full bg-gold/12 px-5 py-2 text-sm font-medium text-gold">
-            25-26 April 2026 &mdash; BITE Campus, Varanasi
-          </span>
-
           {/* Tagline */}
           <p className="mb-4 text-2xl italic text-gold md:text-3xl" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
             &ldquo;From Aptitude to Understanding&rdquo;
@@ -34,13 +23,13 @@ export default function Home() {
 
           {/* H1 */}
           <h1 className="mb-5 text-[32px] font-semibold leading-tight text-chocolate md:text-5xl">
-            Your career journey starts with understanding
+            Free Career Counselling for 3,000+ Students
           </h1>
 
           {/* Subtitle */}
           <p className="mx-auto mb-8 max-w-xl text-[15px] leading-relaxed text-body md:text-base">
-            ARC-T 2.0 Recognition &amp; Guidance Day. 13 zones. Career guidance.
-            Exciting prizes. Free for all registered students.
+            Honest, unbiased career guidance for students in Varanasi and eastern UP.
+            Book your free session, visit BITE Campus, and discover your career path.
           </p>
 
           {/* Buttons */}
@@ -49,28 +38,81 @@ export default function Home() {
               href="/register"
               className="w-full rounded-lg bg-coral px-8 py-3 text-base font-medium text-white transition-colors hover:bg-coral-dark sm:w-auto"
             >
-              Register for Free
+              Book Your Free Session
             </Link>
             <Link
-              href="/arct2"
+              href="/streams"
               className="w-full rounded-lg border border-chocolate px-8 py-3 text-base font-medium text-chocolate transition-colors hover:bg-cream sm:w-auto"
             >
-              Learn More
+              Explore Career Streams
             </Link>
           </div>
 
-          {/* Stats Bar */}
-          <div className="border-t border-gold/30 pt-8">
-            <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
-              {stats.map((s) => (
-                <div key={s.label}>
-                  <div className="text-[28px] font-semibold text-chocolate md:text-4xl">
-                    {s.value}
-                  </div>
-                  <div className="text-sm text-muted">{s.label}</div>
+          {/* Live Counter */}
+          <LiveCounter />
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section className="bg-white px-4 py-16 md:py-20">
+        <div className="mx-auto max-w-[900px]">
+          <h2 className="mb-2 text-center text-2xl font-semibold text-chocolate md:text-[32px]">
+            How It Works
+          </h2>
+          <p className="mb-10 text-center text-sm text-muted">
+            3 simple steps to your career clarity
+          </p>
+          <div className="grid gap-8 md:grid-cols-3">
+            {HOW_IT_WORKS.map((item) => (
+              <div key={item.step} className="flex flex-col items-center text-center">
+                <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gold/10 text-2xl font-bold text-gold">
+                  {item.step}
                 </div>
-              ))}
-            </div>
+                <h3 className="mb-2 text-lg font-semibold text-chocolate">{item.title}</h3>
+                <p className="text-sm text-body">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-10 text-center">
+            <Link
+              href="/register"
+              className="inline-block rounded-lg bg-coral px-8 py-3 text-base font-medium text-white transition-colors hover:bg-coral-dark"
+            >
+              Book Your Free Session
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Career Streams Preview */}
+      <section className="bg-cream px-4 py-16 md:py-20">
+        <div className="mx-auto max-w-[1200px]">
+          <h2 className="mb-2 text-center text-2xl font-semibold text-chocolate md:text-[32px]">
+            10 Career Streams
+          </h2>
+          <p className="mb-10 text-center text-sm text-muted">
+            Explore careers across every field — find what&apos;s right for you
+          </p>
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-5 md:gap-5">
+            {CAREER_STREAMS.map((stream) => (
+              <Link
+                key={stream.name}
+                href={`/streams#${stream.name.toLowerCase().replace(/\s+/g, "-")}`}
+                className="flex flex-col items-center rounded-xl border border-gold/20 bg-white p-5 text-center transition-shadow hover:shadow-md"
+              >
+                <span className="mb-2 text-3xl">{stream.icon}</span>
+                <div className="mb-1 text-sm font-semibold text-chocolate">{stream.name}</div>
+                <div className="text-xs text-gold">{stream.salaryRange}</div>
+              </Link>
+            ))}
+          </div>
+          <div className="mt-8 text-center">
+            <Link
+              href="/streams"
+              className="text-sm font-medium text-gold transition-colors hover:text-gold-dark"
+            >
+              View all streams with career details &rarr;
+            </Link>
           </div>
         </div>
       </section>
@@ -132,7 +174,7 @@ export default function Home() {
             ))}
           </div>
           <p className="mt-6 text-center text-sm text-brown">
-            How to win: Register → Visit all 13 zones → Collect stamps → Enter
+            How to win: Register &rarr; Visit all 13 zones &rarr; Collect stamps &rarr; Enter
             the draw!
           </p>
         </div>
@@ -186,6 +228,40 @@ export default function Home() {
               Babatpur, Varanasi 221204, Uttar Pradesh
             </p>
           </div>
+        </div>
+      </section>
+
+      {/* Ethics Section */}
+      <section className="bg-ivory px-4 py-16 md:py-20">
+        <div className="mx-auto max-w-[700px] text-center">
+          <h2 className="mb-4 text-2xl font-semibold text-chocolate md:text-[32px]">
+            Our Ethics Pledge
+          </h2>
+          <p className="mb-4 text-body leading-relaxed">
+            We don&apos;t sell admissions. We don&apos;t push courses.
+            We provide honest, unbiased career guidance for every student.
+          </p>
+          <p className="font-serif text-lg italic text-gold">
+            &ldquo;We recommend BHU if BHU is right for you.&rdquo;
+          </p>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="bg-coral px-4 py-16 text-center md:py-20">
+        <div className="mx-auto max-w-[600px]">
+          <h2 className="mb-4 text-2xl font-semibold text-white md:text-[32px]">
+            Ready to Discover Your Career Path?
+          </h2>
+          <p className="mb-8 text-white/80">
+            Free for all students. No hidden fees. Just honest guidance.
+          </p>
+          <Link
+            href="/register"
+            className="inline-block rounded-lg bg-white px-10 py-3.5 text-base font-semibold text-coral transition-colors hover:bg-cream"
+          >
+            Book Your Free Session
+          </Link>
         </div>
       </section>
     </>

@@ -45,9 +45,74 @@ export async function GET() {
       )
     `;
 
+    // Add new columns to registrations if missing
+    await db.query(`ALTER TABLE registrations ADD COLUMN IF NOT EXISTS has_smartphone BOOLEAN DEFAULT TRUE`);
+    await db.query(`ALTER TABLE registrations ADD COLUMN IF NOT EXISTS stream_interest VARCHAR(100)`);
+
+    // Sessions table — for counselling programme
+    await db.sql`
+      CREATE TABLE IF NOT EXISTS sessions (
+        id SERIAL PRIMARY KEY,
+        student_id INTEGER REFERENCES registrations(id),
+        counsellor_name VARCHAR(255),
+        cabin_id VARCHAR(10),
+        session_date DATE,
+        shift VARCHAR(50),
+        status VARCHAR(50) DEFAULT 'booked',
+        notes TEXT,
+        recommended_streams TEXT,
+        feedback_id INTEGER,
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `;
+
+    // Feedback table
+    await db.sql`
+      CREATE TABLE IF NOT EXISTS feedback (
+        id SERIAL PRIMARY KEY,
+        session_id INTEGER REFERENCES sessions(id),
+        student_id INTEGER,
+        rating INTEGER,
+        nps INTEGER,
+        most_useful TEXT,
+        career_considering VARCHAR(100),
+        suggestion TEXT,
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `;
+
+    // QR scans table
+    await db.sql`
+      CREATE TABLE IF NOT EXISTS qr_scans (
+        id SERIAL PRIMARY KEY,
+        student_id INTEGER,
+        scan_point VARCHAR(50),
+        scanned_by VARCHAR(255),
+        scanned_at TIMESTAMP DEFAULT NOW()
+      )
+    `;
+
+    // Reference slips table
+    await db.sql`
+      CREATE TABLE IF NOT EXISTS reference_slips (
+        id SERIAL PRIMARY KEY,
+        ref_code VARCHAR(20) UNIQUE,
+        student_id INTEGER,
+        counsellor_name VARCHAR(255),
+        institution VARCHAR(100),
+        programme VARCHAR(255),
+        status VARCHAR(50) DEFAULT 'reference',
+        rep_name VARCHAR(255),
+        reached_at TIMESTAMP,
+        crm_at TIMESTAMP,
+        admission_at TIMESTAMP,
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `;
+
     return NextResponse.json({
       success: true,
-      message: "Database tables created successfully (registrations + guest_registrations + arct_participants)",
+      message: "All database tables created successfully",
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";

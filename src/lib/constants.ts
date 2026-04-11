@@ -14,9 +14,9 @@ export const SOCIAL_LINKS = {
 
 export const NAV_LINKS = [
   { label: "Home", href: "/" },
+  { label: "Career Streams", href: "/streams" },
   { label: "About", href: "/about" },
   { label: "ARC-T 2.0", href: "/arct2" },
-  { label: "Venue", href: "/institutions" },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -99,7 +99,110 @@ export const VENUE = {
 };
 
 export const LEADERSHIP = [
+  { name: "Praveen Rai", designation: "Executive Trustee, Purwanchal Educational Trust", role: "Founder & overall programme direction", initials: "PR" },
+  { name: "Harshita Rai", designation: "Program Coordinator, CareerArc", role: "Content, social media, event lead, digital marketing", initials: "HR" },
   { name: "Dr. Sanjay Jaiswal", designation: "Principal, BITE", role: "Operations lead, faculty coordination", initials: "SJ" },
-  { name: "Harshita Rai", designation: "Program Coordinator, CareerArc", role: "Content, social media, event lead, hype campaign, digital marketing", initials: "HR" },
+  { name: "Rahul Srivastava", designation: "Coordinator, BIPE", role: "Institutional liaison, referral coordination", initials: "RS" },
   { name: "Amit Pal", designation: "Coordinator, CareerArc", role: "Campus logistics and booth coordination", initials: "AP" },
+  { name: "Mrs. Menu", designation: "Coordinator, BIP", role: "Pharmacy programme liaison, student support", initials: "MN" },
+  { name: "Abhishek Mishra", designation: "CTO, Sort String Solutions LLP", role: "Technology, portal development, system architecture", initials: "AM" },
+];
+
+export const HOW_IT_WORKS = [
+  { step: 1, title: "Book", desc: "Register online with your phone number. Pick a date and shift." },
+  { step: 2, title: "Visit", desc: "Come to BITE Campus with your Aadhaar. Get your QR code at the gate." },
+  { step: 3, title: "Discover", desc: "Explore 13 career zones, take tests, get personalised guidance." },
+];
+
+export const CAREER_STREAMS = [
+  {
+    name: "Science",
+    icon: "🔬",
+    color: "#2563EB",
+    careers: ["Research Scientist", "Data Analyst", "Environmental Scientist", "Lab Technician", "Geologist"],
+    salaryRange: "₹4–25 LPA",
+    pathway: "B.Sc → M.Sc → PhD / NET-JRF",
+    exams: "IIT JAM, CSIR NET, GATE",
+  },
+  {
+    name: "Engineering",
+    icon: "⚙️",
+    color: "#0D9488",
+    careers: ["Civil Engineer", "Mechanical Engineer", "Electrical Engineer", "Chemical Engineer", "Robotics Engineer"],
+    salaryRange: "₹5–30 LPA",
+    pathway: "B.Tech / B.E. → M.Tech → Industry / Research",
+    exams: "JEE Main, JEE Advanced, GATE",
+  },
+  {
+    name: "Information Technology",
+    icon: "💻",
+    color: "#7C3AED",
+    careers: ["Software Developer", "Web Developer", "Cybersecurity Analyst", "AI/ML Engineer", "Cloud Architect"],
+    salaryRange: "₹6–50 LPA",
+    pathway: "B.Tech CS / BCA → MCA / M.Tech → Industry",
+    exams: "JEE, NIMCET, GATE CS",
+  },
+  {
+    name: "Arts & Humanities",
+    icon: "🎨",
+    color: "#D4740A",
+    careers: ["Journalist", "Psychologist", "Historian", "Social Worker", "Content Writer", "Filmmaker"],
+    salaryRange: "₹3–20 LPA",
+    pathway: "BA → MA → UGC NET / PhD / Industry",
+    exams: "CUET, UGC NET, Civil Services",
+  },
+  {
+    name: "Teaching & Education",
+    icon: "📚",
+    color: "#059669",
+    careers: ["School Teacher", "Professor", "Education Counsellor", "Curriculum Designer", "EdTech Specialist"],
+    salaryRange: "₹3–15 LPA",
+    pathway: "B.Ed / D.El.Ed → TET/CTET → Teaching → M.Ed / PhD",
+    exams: "CTET, UPTET, UGC NET Education",
+  },
+  {
+    name: "Medical & Healthcare",
+    icon: "🏥",
+    color: "#DC2626",
+    careers: ["Doctor (MBBS)", "Dentist", "Pharmacist", "Physiotherapist", "Nurse", "Lab Technician"],
+    salaryRange: "₹5–50 LPA",
+    pathway: "MBBS / BDS / B.Pharm / B.Sc Nursing → PG → Practice",
+    exams: "NEET UG, NEET PG, GPAT",
+  },
+  {
+    name: "Commerce & Finance",
+    icon: "📊",
+    color: "#1E40AF",
+    careers: ["Chartered Accountant", "Investment Banker", "Financial Analyst", "Tax Consultant", "Actuary"],
+    salaryRange: "₹5–40 LPA",
+    pathway: "B.Com → CA/CMA/CS / MBA Finance",
+    exams: "CA Foundation, CMA, CS, CAT",
+  },
+  {
+    name: "Government Services",
+    icon: "🏛️",
+    color: "#8B5CF6",
+    careers: ["IAS/IPS Officer", "Bank PO", "SSC Officer", "State PCS", "Railway Officer", "Defence Officer"],
+    salaryRange: "₹5–25 LPA + Benefits",
+    pathway: "Graduation → Coaching → Competitive Exams",
+    exams: "UPSC CSE, SSC CGL, IBPS PO, NDA, CDS",
+  },
+  {
+    name: "Vocational & Skilled Trades",
+    icon: "🔧",
+    color: "#DB2777",
+    careers: ["Electrician", "Plumber", "Welder", "Automotive Technician", "Fashion Designer", "Chef"],
+    salaryRange: "₹3–15 LPA",
+    pathway: "ITI / Polytechnic / Diploma → Industry / Self-employment",
+    exams: "ITI Entrance, Polytechnic Entrance",
+  },
+  {
+    name: "Emerging & New-Age",
+    icon: "🚀",
+    color: "#C5973E",
+    careers: ["AI/ML Specialist", "Blockchain Developer", "Drone Pilot", "EV Engineer", "Space Tech", "Biotech Researcher"],
+    salaryRange: "₹8–60 LPA",
+    pathway: "B.Tech / B.Sc → Specialization → Industry / Startup",
+    exams: "JEE, GATE, Industry Certifications",
+  },
 ];

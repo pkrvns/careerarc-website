@@ -37,6 +37,53 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Mission & Ethics */}
+      <section className="bg-white px-4 py-16 md:py-20">
+        <div className="mx-auto max-w-[800px]">
+          <h2 className="mb-6 text-center text-2xl font-semibold text-chocolate md:text-[32px]">
+            Our Ethics Pledge
+          </h2>
+          <div className="rounded-xl border border-gold/20 bg-ivory p-8 text-center">
+            <p className="mb-4 text-body leading-relaxed">
+              CareerArc provides honest, unbiased career guidance for ALL career paths.
+              We do not promote any single institution. We recommend what is genuinely
+              right for each student.
+            </p>
+            <p className="font-serif text-xl italic text-gold">
+              &ldquo;We recommend BHU if BHU is right for you.&rdquo;
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Team */}
+      <section className="bg-ivory px-4 py-16 md:py-20">
+        <div className="mx-auto max-w-[1200px]">
+          <h2 className="mb-8 text-center text-2xl font-semibold text-chocolate md:text-[32px]">
+            Our Team
+          </h2>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {LEADERSHIP.map((person) => (
+              <div
+                key={person.name}
+                className="flex items-center gap-4 rounded-xl border border-gold/20 bg-white p-5"
+              >
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gold/10 text-sm font-semibold text-gold">
+                  {person.initials}
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-chocolate">
+                    {person.name}
+                  </div>
+                  <div className="text-xs text-brown">{person.designation}</div>
+                  <div className="text-xs text-muted">{person.role}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Venue */}
       <section className="bg-white px-4 py-16 md:py-20">
         <div className="mx-auto max-w-[800px] text-center">
@@ -64,36 +111,8 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Leadership */}
-      <section className="bg-ivory px-4 py-16 md:py-20">
-        <div className="mx-auto max-w-[1200px]">
-          <h2 className="mb-8 text-center text-2xl font-semibold text-chocolate md:text-[32px]">
-            Team
-          </h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {LEADERSHIP.map((person) => (
-              <div
-                key={person.name}
-                className="flex items-center gap-4 rounded-xl border border-gold/20 bg-white p-5"
-              >
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gold/10 text-sm font-semibold text-gold">
-                  {person.initials}
-                </div>
-                <div>
-                  <div className="text-sm font-semibold text-chocolate">
-                    {person.name}
-                  </div>
-                  <div className="text-xs text-brown">{person.designation}</div>
-                  <div className="text-xs text-muted">{person.role}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Technology Partner */}
-      <section className="bg-white px-4 py-16 md:py-20">
+      <section className="bg-ivory px-4 py-16 md:py-20">
         <div className="mx-auto max-w-[600px] text-center">
           <p className="mb-4 text-xs uppercase tracking-wider text-muted">
             Technology Partner

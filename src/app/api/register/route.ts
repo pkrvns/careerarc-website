@@ -6,7 +6,7 @@ export async function POST(request: Request) {
     const db = getDb();
 
     const body = await request.json();
-    const { fullName, mobile, institution, classYear, preferredDate, parentAttending, parentName } = body;
+    const { fullName, mobile, institution, classYear, preferredDate, parentAttending, parentName, hasSmartphone, streamInterest } = body;
 
     // Validate required fields
     if (!fullName || !mobile || !institution || !classYear || !preferredDate) {
@@ -38,8 +38,8 @@ export async function POST(request: Request) {
 
     // Insert registration
     const result = await db.sql`
-      INSERT INTO registrations (full_name, mobile, institution, class_year, preferred_date, parent_attending, parent_name, registered_at)
-      VALUES (${fullName}, ${mobile}, ${institution}, ${classYear}, ${preferredDate}, ${parentAttending || false}, ${parentName || null}, NOW())
+      INSERT INTO registrations (full_name, mobile, institution, class_year, preferred_date, parent_attending, parent_name, has_smartphone, stream_interest, registered_at)
+      VALUES (${fullName}, ${mobile}, ${institution}, ${classYear}, ${preferredDate}, ${parentAttending || false}, ${parentName || null}, ${hasSmartphone !== "false"}, ${streamInterest || null}, NOW())
       RETURNING id, preferred_date
     `;
 

@@ -9,8 +9,10 @@ type FormData = {
   institution: string;
   classYear: string;
   preferredDate: string;
+  hasSmartphone: boolean;
   parentAttending: boolean;
   parentName: string;
+  streamInterest: string;
 };
 
 const institutions = [
@@ -127,7 +129,7 @@ export function RegistrationForm() {
     setValue,
     formState: { errors },
   } = useForm<FormData>({
-    defaultValues: { parentAttending: false, preferredDate: "day1" },
+    defaultValues: { parentAttending: false, hasSmartphone: true, preferredDate: "day1", streamInterest: "" },
   });
 
   const parentAttending = watch("parentAttending");
@@ -185,12 +187,16 @@ export function RegistrationForm() {
       <div className="rounded-xl border border-gold/20 bg-white p-8 text-center">
         <div className="mb-4 text-5xl">🎉</div>
         <h2 className="mb-2 text-xl font-semibold text-chocolate">
-          You&apos;re registered!
+          Session Booked!
         </h2>
         <p className="mb-4 text-sm text-body">
           Your date: <strong>{allocatedDate}</strong>. Save this page or take a
           screenshot.
         </p>
+        <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-4">
+          <p className="text-sm font-semibold text-amber-800">🪪 Aadhaar Card ZAROORI hai!</p>
+          <p className="mt-1 text-xs text-amber-700">Event ke din Aadhaar Card zaroor laayen.</p>
+        </div>
         <div className="mb-6 rounded-lg bg-cream p-4">
           <p className="text-xs text-muted">Your QR Code will be sent via WhatsApp</p>
         </div>
@@ -384,6 +390,72 @@ export function RegistrationForm() {
         </div>
       )}
 
+      {/* Stream Interest */}
+      <div className="mb-5">
+        <label className="mb-1.5 block text-sm font-medium text-chocolate">
+          Career Stream Interest
+        </label>
+        <select
+          {...register("streamInterest")}
+          className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-chocolate outline-none transition-colors focus:border-gold focus:ring-1 focus:ring-gold"
+        >
+          <option value="">Select a stream (optional)</option>
+          <option value="Science">Science</option>
+          <option value="Engineering">Engineering</option>
+          <option value="IT">Information Technology</option>
+          <option value="Arts">Arts &amp; Humanities</option>
+          <option value="Teaching">Teaching &amp; Education</option>
+          <option value="Medical">Medical &amp; Healthcare</option>
+          <option value="Commerce">Commerce &amp; Finance</option>
+          <option value="Government">Government Services</option>
+          <option value="Vocational">Vocational &amp; Skilled Trades</option>
+          <option value="Emerging">Emerging &amp; New-Age</option>
+          <option value="Not Sure">Not Sure Yet</option>
+        </select>
+      </div>
+
+      {/* Smartphone */}
+      <div className="mb-5">
+        <label className="mb-1.5 block text-sm font-medium text-chocolate">
+          Do you have a smartphone?
+        </label>
+        <div className="flex gap-4">
+          <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-300 px-4 py-2.5 has-[:checked]:border-gold has-[:checked]:bg-gold/5">
+            <input
+              {...register("hasSmartphone")}
+              type="radio"
+              value="true"
+              defaultChecked
+              className="accent-gold"
+            />
+            <span className="text-sm text-chocolate">Yes</span>
+          </label>
+          <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-300 px-4 py-2.5 has-[:checked]:border-gold has-[:checked]:bg-gold/5">
+            <input
+              {...register("hasSmartphone")}
+              type="radio"
+              value="false"
+              className="accent-gold"
+            />
+            <span className="text-sm text-chocolate">No</span>
+          </label>
+        </div>
+        <p className="mt-1 text-xs text-muted">If no, a printed QR slip will be ready for you at the gate.</p>
+      </div>
+
+      {/* Aadhaar Reminder */}
+      <div className="mb-5 rounded-lg border border-amber-200 bg-amber-50 p-4">
+        <div className="flex items-start gap-3">
+          <span className="text-xl">🪪</span>
+          <div>
+            <p className="text-sm font-semibold text-amber-800">Aadhaar Card ZAROORI hai!</p>
+            <p className="mt-1 text-xs text-amber-700">
+              Apna Aadhaar Card event ke din zaroor laayen. Bina Aadhaar ke entry nahi milegi.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Server Error */}
       {serverError && (
         <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600">
@@ -397,7 +469,7 @@ export function RegistrationForm() {
         disabled={submitting}
         className="mt-2 w-full rounded-lg bg-coral py-3.5 text-base font-medium text-white transition-colors hover:bg-coral-dark disabled:opacity-50"
       >
-        {submitting ? "Registering..." : "Register for Free"}
+        {submitting ? "Booking Session..." : "Book Your Free Session"}
       </button>
 
       <p className="mt-4 text-center text-xs text-muted">
