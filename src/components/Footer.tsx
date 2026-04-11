@@ -14,7 +14,7 @@ export function Footer() {
           href="/book"
           className="inline-block rounded-lg bg-coral px-8 py-3 text-base font-medium text-white transition-colors hover:bg-coral-dark"
         >
-          Register Now
+          Book Your Free Session
         </Link>
         <p className="mt-3 text-sm text-muted">
           or{" "}
@@ -104,8 +104,8 @@ export function Footer() {
             <ul className="space-y-2 text-sm">
               {[
                 { label: "About", href: "/about" },
-                { label: "ARC-T 2.0", href: "/arct2" },
-                { label: "Register", href: "/register" },
+                { label: "Career Streams", href: "/streams" },
+                { label: "Book Session", href: "/book" },
                 { label: "Contact", href: "/contact" },
                 { label: "Privacy Policy", href: "/privacy" },
                 { label: "Terms", href: "/terms" },
