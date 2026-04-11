@@ -1,8 +1,18 @@
 import { getDb } from "@/lib/db";
 import { NextResponse } from "next/server";
+import { rateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
   try {
+    const ip = request.headers.get("x-forwarded-for") || "unknown";
+    const { success } = rateLimit(`register:${ip}`, 20, 60 * 60 * 1000);
+    if (!success) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        { status: 429 }
+      );
+    }
+
     const db = getDb();
 
     const body = await request.json();

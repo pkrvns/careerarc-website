@@ -1,20 +1,10 @@
 import { getDb } from "@/lib/db";
+import { getPortalUserFromCookie } from "@/lib/auth";
 import { NextResponse } from "next/server";
-
-function parseGuideCookie(request: Request) {
-  const cookieHeader = request.headers.get("cookie") || "";
-  const match = cookieHeader.match(/guide_token=([^;]+)/);
-  if (!match) return null;
-  try {
-    return JSON.parse(decodeURIComponent(match[1]));
-  } catch {
-    return null;
-  }
-}
 
 export async function PUT(request: Request) {
   try {
-    const token = parseGuideCookie(request);
+    const token = getPortalUserFromCookie(request, "guide_token");
     if (!token || !token.name) {
       return NextResponse.json(
         { error: "Not authenticated" },

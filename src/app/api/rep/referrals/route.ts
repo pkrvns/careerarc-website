@@ -1,23 +1,10 @@
 import { getDb } from "@/lib/db";
+import { getPortalUserFromCookie } from "@/lib/auth";
 import { NextResponse } from "next/server";
-
-function getRepFromCookie(request: Request): { name: string; phone: string; department: string } | null {
-  const cookieHeader = request.headers.get("cookie");
-  if (!cookieHeader) return null;
-
-  const match = cookieHeader.match(/rep_token=([^;]+)/);
-  if (!match) return null;
-
-  try {
-    return JSON.parse(decodeURIComponent(match[1]));
-  } catch {
-    return null;
-  }
-}
 
 // GET — Fetch referrals for this rep's institution
 export async function GET(request: Request) {
-  const rep = getRepFromCookie(request);
+  const rep = getPortalUserFromCookie(request, "rep_token");
   if (!rep) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -66,7 +53,7 @@ export async function GET(request: Request) {
 
 // PUT — Update referral status
 export async function PUT(request: Request) {
-  const rep = getRepFromCookie(request);
+  const rep = getPortalUserFromCookie(request, "rep_token");
   if (!rep) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

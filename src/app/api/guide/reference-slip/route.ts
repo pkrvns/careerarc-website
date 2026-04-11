@@ -1,20 +1,10 @@
 import { getDb } from "@/lib/db";
+import { getPortalUserFromCookie } from "@/lib/auth";
 import { NextResponse } from "next/server";
-
-function parseGuideCookie(request: Request) {
-  const cookieHeader = request.headers.get("cookie") || "";
-  const match = cookieHeader.match(/guide_token=([^;]+)/);
-  if (!match) return null;
-  try {
-    return JSON.parse(decodeURIComponent(match[1]));
-  } catch {
-    return null;
-  }
-}
 
 export async function POST(request: Request) {
   try {
-    const token = parseGuideCookie(request);
+    const token = getPortalUserFromCookie(request, "guide_token");
     if (!token || !token.name) {
       return NextResponse.json(
         { error: "Not authenticated" },
@@ -34,55 +24,34 @@ export async function POST(request: Request) {
 
     const db = getDb();
 
-    // Generate unique ref code: REF-2026-XXXX
-    const randomDigits = Math.floor(1000 + Math.random() * 9000);
-    const refCode = `REF-2026-${randomDigits}`;
+    // Generate unique ref code with INSERT ... ON CONFLICT to avoid TOCTOU race condition
+    const MAX_ATTEMPTS = 5;
+    let finalRefCode: string | null = null;
 
-    // Check uniqueness
-    const existing = await db.sql`
-      SELECT id FROM reference_slips WHERE ref_code = ${refCode}
-    `;
-    if (existing.rows.length > 0) {
-      // Retry with different random
-      const retry = Math.floor(1000 + Math.random() * 9000);
-      const retryCode = `REF-2026-${retry}`;
+    for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+      const randomDigits = Math.floor(1000 + Math.random() * 9000);
+      const candidateCode = `REF-2026-${randomDigits}`;
 
-      await db.query(
-        `INSERT INTO reference_slips (ref_code, student_id, counsellor_name, institution, programme)
-         VALUES ($1, $2, $3, $4, $5)`,
-        [retryCode, studentId, token.name, institution, programme]
+      const insertResult = await db.query(
+        `INSERT INTO reference_slips (ref_code, student_id, counsellor_name, institution, programme, status)
+         VALUES ($1, $2, $3, $4, $5, 'reference')
+         ON CONFLICT (ref_code) DO NOTHING
+         RETURNING id`,
+        [candidateCode, studentId, token.name, institution, programme]
       );
 
-      await db.query(
-        `INSERT INTO activity_log (user_name, action, entity_type, entity_id, metadata)
-         VALUES ($1, $2, $3, $4, $5)`,
-        [
-          token.name,
-          "generated_reference_slip",
-          "reference_slip",
-          studentId,
-          JSON.stringify({
-            refCode: retryCode,
-            institution,
-            programme,
-            sessionId,
-          }),
-        ]
-      );
-
-      return NextResponse.json({
-        success: true,
-        refCode: retryCode,
-        institution,
-        programme,
-      });
+      if (insertResult.rows.length > 0) {
+        finalRefCode = candidateCode;
+        break;
+      }
     }
 
-    await db.query(
-      `INSERT INTO reference_slips (ref_code, student_id, counsellor_name, institution, programme)
-       VALUES ($1, $2, $3, $4, $5)`,
-      [refCode, studentId, token.name, institution, programme]
-    );
+    if (!finalRefCode) {
+      return NextResponse.json(
+        { error: "Failed to generate a unique reference code. Please try again." },
+        { status: 500 }
+      );
+    }
 
     // Log to activity_log
     await db.query(
@@ -93,13 +62,13 @@ export async function POST(request: Request) {
         "generated_reference_slip",
         "reference_slip",
         studentId,
-        JSON.stringify({ refCode, institution, programme, sessionId }),
+        JSON.stringify({ refCode: finalRefCode, institution, programme, sessionId }),
       ]
     );
 
     return NextResponse.json({
       success: true,
-      refCode,
+      refCode: finalRefCode,
       institution,
       programme,
     });

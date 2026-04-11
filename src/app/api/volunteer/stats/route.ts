@@ -1,20 +1,10 @@
 import { getDb } from "@/lib/db";
+import { getPortalUserFromCookie } from "@/lib/auth";
 import { NextResponse } from "next/server";
-
-function getVolunteerFromCookie(request: Request) {
-  const cookieHeader = request.headers.get("cookie") || "";
-  const match = cookieHeader.match(/volunteer_token=([^;]+)/);
-  if (!match) return null;
-  try {
-    return JSON.parse(decodeURIComponent(match[1]));
-  } catch {
-    return null;
-  }
-}
 
 export async function GET(request: Request) {
   try {
-    const volunteer = getVolunteerFromCookie(request);
+    const volunteer = getPortalUserFromCookie(request, "volunteer_token");
     if (!volunteer) {
       return NextResponse.json(
         { error: "Not authenticated" },

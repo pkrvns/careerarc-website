@@ -983,8 +983,7 @@ function QRScannerView({
             // QR scan error - ignore (continuous scanning)
           }
         );
-      } catch (err) {
-        console.error("Scanner init error:", err);
+      } catch {
         setError("Camera access denied or not available. Please allow camera permission.");
         setScanning(false);
       }
@@ -993,9 +992,13 @@ function QRScannerView({
     initScanner();
 
     return () => {
-      if (scanner) {
-        scanner.stop().catch(() => {});
-        scanner.clear();
+      // Use the ref for cleanup — the local `scanner` variable may be stale
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const instance = html5QrCodeRef.current as any;
+      if (instance) {
+        instance.stop().catch(() => {});
+        instance.clear();
+        html5QrCodeRef.current = null;
       }
     };
   }, [scanning]);

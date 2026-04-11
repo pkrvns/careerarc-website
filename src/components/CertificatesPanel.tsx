@@ -35,15 +35,27 @@ export function CertificatesPanel() {
   const [typeFilter, setTypeFilter] = useState("");
   const [generating, setGenerating] = useState(false);
   const [batchResult, setBatchResult] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const fetchCertificates = useCallback(async () => {
-    const params = new URLSearchParams();
-    if (typeFilter) params.set("type", typeFilter);
-    const res = await fetch(`/api/admin/certificates?${params}`);
-    if (res.ok) {
-      const data = await res.json();
-      setCertificates(data.certificates);
-      setStats(data.stats);
+    try {
+      setLoading(true);
+      setError("");
+      const params = new URLSearchParams();
+      if (typeFilter) params.set("type", typeFilter);
+      const res = await fetch(`/api/admin/certificates?${params}`);
+      if (res.ok) {
+        const data = await res.json();
+        setCertificates(data.certificates);
+        setStats(data.stats);
+      } else {
+        setError("Failed to load certificates");
+      }
+    } catch {
+      setError("Network error loading certificates");
+    } finally {
+      setLoading(false);
     }
   }, [typeFilter]);
 
@@ -70,8 +82,28 @@ export function CertificatesPanel() {
     }
   };
 
+  if (loading && certificates.length === 0) {
+    return (
+      <div className="flex items-center justify-center py-16">
+        <div className="text-center">
+          <div className="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-2 border-gold border-t-transparent" />
+          <p className="text-sm text-muted">Loading certificates...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
+      {error && (
+        <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-600">
+          {error}
+          <button onClick={fetchCertificates} className="ml-2 text-xs text-gold hover:underline">
+            Retry
+          </button>
+        </div>
+      )}
+
       {/* Stats */}
       <div className="mb-4 grid grid-cols-2 gap-4 md:grid-cols-4">
         <div className="rounded-xl border border-gold/20 bg-white p-4">

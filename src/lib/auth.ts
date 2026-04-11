@@ -53,3 +53,33 @@ export function authenticateRequest(request: Request): { username: string; role:
   if (!token) return null;
   return verifyToken(token);
 }
+
+// --- Portal token types and functions ---
+
+export interface PortalTokenData {
+  name: string;
+  phone: string;
+  role: string;
+  [key: string]: string;
+}
+
+export function generatePortalToken(data: { name: string; phone: string; role: string; [key: string]: string }): string {
+  return jwt.sign(data, JWT_SECRET, { expiresIn: "12h" });
+}
+
+export function verifyPortalToken(token: string): PortalTokenData | null {
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as PortalTokenData;
+    return decoded;
+  } catch {
+    return null;
+  }
+}
+
+export function getPortalUserFromCookie(request: Request, cookieName: string): PortalTokenData | null {
+  const cookieHeader = request.headers.get("cookie");
+  if (!cookieHeader) return null;
+  const match = cookieHeader.match(new RegExp(`${cookieName}=([^;]+)`));
+  if (!match) return null;
+  return verifyPortalToken(match[1]);
+}

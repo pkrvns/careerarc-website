@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 type Alert = {
   type: string;
@@ -42,31 +42,7 @@ export function NotificationsPanel() {
   const [actionFilter, setActionFilter] = useState("");
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    fetchAlerts();
-    fetchActivities();
-  }, []);
-
-  useEffect(() => {
-    fetchActivities();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [actionFilter]);
-
-  const fetchAlerts = async () => {
-    setAlertLoading(true);
-    try {
-      const res = await fetch("/api/admin/alerts");
-      if (!res.ok) throw new Error("Failed to load alerts");
-      const json = await res.json();
-      setAlerts(json.alerts || []);
-    } catch {
-      setError("Failed to load alerts");
-    } finally {
-      setAlertLoading(false);
-    }
-  };
-
-  const fetchActivities = async () => {
+  const fetchActivities = useCallback(async () => {
     setActivityLoading(true);
     try {
       const params = new URLSearchParams();
@@ -79,6 +55,25 @@ export function NotificationsPanel() {
       setError("Failed to load activity feed");
     } finally {
       setActivityLoading(false);
+    }
+  }, [actionFilter]);
+
+  useEffect(() => {
+    fetchAlerts();
+    fetchActivities();
+  }, [fetchActivities]);
+
+  const fetchAlerts = async () => {
+    setAlertLoading(true);
+    try {
+      const res = await fetch("/api/admin/alerts");
+      if (!res.ok) throw new Error("Failed to load alerts");
+      const json = await res.json();
+      setAlerts(json.alerts || []);
+    } catch {
+      setError("Failed to load alerts");
+    } finally {
+      setAlertLoading(false);
     }
   };
 

@@ -1,8 +1,19 @@
 import { getDb } from "@/lib/db";
+import { generatePortalToken } from "@/lib/auth";
 import { NextResponse } from "next/server";
+import { rateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
   try {
+    const ip = request.headers.get("x-forwarded-for") || "unknown";
+    const { success } = rateLimit(`guide-login:${ip}`, 10, 15 * 60 * 1000);
+    if (!success) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        { status: 429 }
+      );
+    }
+
     const { phone } = await request.json();
 
     if (!phone || !/^[6-9]\d{9}$/.test(phone)) {
@@ -37,10 +48,11 @@ export async function POST(request: Request) {
 
     response.cookies.set(
       "guide_token",
-      JSON.stringify({
+      generatePortalToken({
         name: user.name,
         phone: user.phone,
         cabinId: user.cabin_id,
+        role: "counsellor",
       }),
       {
         httpOnly: true,

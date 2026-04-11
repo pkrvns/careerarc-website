@@ -16,6 +16,9 @@ export async function GET(request: Request) {
     const limit = 100;
     const offset = (page - 1) * limit;
 
+    // Lazy cleanup: delete activity log entries older than 90 days
+    await db.sql`DELETE FROM activity_log WHERE created_at < NOW() - INTERVAL '90 days'`;
+
     let result;
     if (type) {
       result = await db.sql`

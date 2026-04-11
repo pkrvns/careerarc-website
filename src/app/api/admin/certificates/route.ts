@@ -68,8 +68,9 @@ export async function GET(request: Request) {
         },
       },
     });
-  } catch {
-    return NextResponse.json({ certificates: [], stats: { total: 0, generated: 0, sent: 0, byType: {} } });
+  } catch (error) {
+    console.error("Certificates fetch error:", error);
+    return NextResponse.json({ error: "Failed to fetch certificates" }, { status: 500 });
   }
 }
 

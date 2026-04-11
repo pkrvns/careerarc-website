@@ -1,10 +1,20 @@
 import { getDb } from "@/lib/db";
 import { NextResponse } from "next/server";
+import { rateLimit } from "@/lib/rate-limit";
 
 const GUEST_LIMIT_PER_DAY = 200;
 
 export async function POST(request: Request) {
   try {
+    const ip = request.headers.get("x-forwarded-for") || "unknown";
+    const { success } = rateLimit(`register-guest:${ip}`, 20, 60 * 60 * 1000);
+    if (!success) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        { status: 429 }
+      );
+    }
+
     const db = getDb();
 
     const body = await request.json();
@@ -57,30 +67,28 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check guest capacity for the preferred date
-    const guestCount = await db.sql`
-      SELECT COUNT(*) as count FROM guest_registrations WHERE preferred_date = ${preferredDate}
-    `;
+    // Atomic capacity check + insert to avoid race condition
+    const studentName = student.rows[0].full_name;
+    const result = await db.query(
+      `INSERT INTO guest_registrations (guest_name, guest_mobile, relationship, student_mobile, student_name, preferred_date, registered_at)
+       SELECT $1, $2, $3, $4, $5, $6, NOW()
+       WHERE (SELECT COUNT(*) FROM guest_registrations WHERE preferred_date = $6) < $7
+       RETURNING id, preferred_date`,
+      [guestName, guestMobile, relationship, studentMobile, studentName, preferredDate, GUEST_LIMIT_PER_DAY]
+    );
 
-    if (parseInt(guestCount.rows[0].count) >= GUEST_LIMIT_PER_DAY) {
+    if (result.rows.length === 0) {
       return NextResponse.json(
         { error: `Guest capacity for ${preferredDate === "day1" ? "Day 1 (25 April)" : "Day 2 (26 April)"} is full (${GUEST_LIMIT_PER_DAY} limit). Please try the other date.` },
         { status: 409 }
       );
     }
 
-    // Insert guest registration
-    const result = await db.sql`
-      INSERT INTO guest_registrations (guest_name, guest_mobile, relationship, student_mobile, student_name, preferred_date, registered_at)
-      VALUES (${guestName}, ${guestMobile}, ${relationship}, ${studentMobile}, ${student.rows[0].full_name}, ${preferredDate}, NOW())
-      RETURNING id, preferred_date
-    `;
-
     return NextResponse.json({
       success: true,
       id: result.rows[0].id,
       date: result.rows[0].preferred_date,
-      studentName: student.rows[0].full_name,
+      studentName,
       message: "Guest registration successful!",
     });
   } catch (error) {

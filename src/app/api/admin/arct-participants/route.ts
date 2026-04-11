@@ -84,7 +84,7 @@ export async function GET(request: Request) {
     });
   } catch (error) {
     console.error("Error fetching arct participants:", error);
-    return NextResponse.json({ participants: [], total: 0, page: 1, totalPages: 0, stats: { total: 0, complete: 0, pending: 0 }, institutions: [] });
+    return NextResponse.json({ error: "Failed to fetch participants" }, { status: 500 });
   }
 }
 
