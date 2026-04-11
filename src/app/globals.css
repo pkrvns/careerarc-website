@@ -66,3 +66,35 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #C5973E;
 }
+
+/* Volunteer App form inputs */
+.form-input {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(197, 151, 62, 0.2);
+  background-color: #FFFDF5;
+  color: #3B2314;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  outline: none;
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+
+.form-input::placeholder {
+  color: #94A3B8;
+}
+
+.form-input:focus {
+  box-shadow: 0 0 0 2px rgba(197, 151, 62, 0.3);
+  border-color: rgba(197, 151, 62, 0.5);
+}
+
+/* Toast animation */
+@keyframes fade-in {
+  from { opacity: 0; transform: translate(-50%, -8px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+.animate-fade-in {
+  animation: fade-in 0.25s ease-out;
+}

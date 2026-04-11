@@ -152,6 +152,36 @@ export async function GET() {
       )
     `;
 
+    // Certificates table
+    await db.sql`
+      CREATE TABLE IF NOT EXISTS certificates (
+        id SERIAL PRIMARY KEY,
+        student_id INTEGER,
+        cert_type VARCHAR(50) NOT NULL,
+        certificate_data TEXT,
+        pdf_url VARCHAR(500),
+        status VARCHAR(50) DEFAULT 'generated',
+        sent_via_whatsapp BOOLEAN DEFAULT FALSE,
+        sent_at TIMESTAMP,
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `;
+
+    // Debrief reports table
+    await db.sql`
+      CREATE TABLE IF NOT EXISTS debrief_reports (
+        id SERIAL PRIMARY KEY,
+        report_date DATE NOT NULL,
+        report_type VARCHAR(20) DEFAULT 'daily',
+        data_json TEXT,
+        claude_response TEXT,
+        highlights TEXT,
+        concerns TEXT,
+        suggestions TEXT,
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `;
+
     return NextResponse.json({
       success: true,
       message: "All database tables created successfully",

@@ -1,6 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, lazy, Suspense } from "react";
+
+const CertificatesPanel = lazy(() => import("./CertificatesPanel").then(m => ({ default: m.CertificatesPanel })));
+const DebriefPanel = lazy(() => import("./DebriefPanel").then(m => ({ default: m.DebriefPanel })));
+const AnalyticsPanel = lazy(() => import("./AnalyticsPanel").then(m => ({ default: m.AnalyticsPanel })));
+const NotificationsPanel = lazy(() => import("./NotificationsPanel").then(m => ({ default: m.NotificationsPanel })));
 
 type Registration = {
   id: number;
@@ -45,7 +50,7 @@ export function AdminDashboard() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
-  const [tab, setTab] = useState<"students" | "guests" | "arct" | "users" | "referrals">("students");
+  const [tab, setTab] = useState<"students" | "guests" | "arct" | "users" | "referrals" | "certificates" | "debrief" | "analytics" | "notifications">("students");
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [guests, setGuests] = useState<Guest[]>([]);
   const [stats, setStats] = useState<Stats>({ total: 0, day1: 0, day2: 0 });
@@ -357,6 +362,38 @@ export function AdminDashboard() {
             }`}
           >
             Referrals ({referralStats.total})
+          </button>
+          <button
+            onClick={() => setTab("certificates")}
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+              tab === "certificates" ? "bg-coral text-white" : "bg-white text-brown border border-gold/20"
+            }`}
+          >
+            Certificates
+          </button>
+          <button
+            onClick={() => setTab("debrief")}
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+              tab === "debrief" ? "bg-coral text-white" : "bg-white text-brown border border-gold/20"
+            }`}
+          >
+            AI Debrief
+          </button>
+          <button
+            onClick={() => setTab("analytics")}
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+              tab === "analytics" ? "bg-coral text-white" : "bg-white text-brown border border-gold/20"
+            }`}
+          >
+            Analytics
+          </button>
+          <button
+            onClick={() => setTab("notifications")}
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+              tab === "notifications" ? "bg-coral text-white" : "bg-white text-brown border border-gold/20"
+            }`}
+          >
+            Alerts
           </button>
         </div>
 
@@ -968,6 +1005,33 @@ export function AdminDashboard() {
               </tbody>
             </table>
           </div>
+        )}
+        {/* Certificates */}
+        {tab === "certificates" && (
+          <Suspense fallback={<div className="py-8 text-center text-muted">Loading...</div>}>
+            <CertificatesPanel />
+          </Suspense>
+        )}
+
+        {/* AI Debrief */}
+        {tab === "debrief" && (
+          <Suspense fallback={<div className="py-8 text-center text-muted">Loading...</div>}>
+            <DebriefPanel />
+          </Suspense>
+        )}
+
+        {/* Analytics */}
+        {tab === "analytics" && (
+          <Suspense fallback={<div className="py-8 text-center text-muted">Loading...</div>}>
+            <AnalyticsPanel />
+          </Suspense>
+        )}
+
+        {/* Notifications & Alerts */}
+        {tab === "notifications" && (
+          <Suspense fallback={<div className="py-8 text-center text-muted">Loading...</div>}>
+            <NotificationsPanel />
+          </Suspense>
         )}
       </div>
     </div>
