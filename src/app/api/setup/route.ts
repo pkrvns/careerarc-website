@@ -261,6 +261,12 @@ export async function GET() {
     // Add missing columns to debrief_reports
     await db.query(`ALTER TABLE debrief_reports ADD COLUMN IF NOT EXISTS tomorrow_prep TEXT`);
     await db.query(`ALTER TABLE debrief_reports ADD COLUMN IF NOT EXISTS updates_needed TEXT`);
+    await db.query(`ALTER TABLE debrief_reports ADD COLUMN IF NOT EXISTS scorecard TEXT`);
+    await db.query(`ALTER TABLE debrief_reports ADD COLUMN IF NOT EXISTS student_voice TEXT`);
+    await db.query(`ALTER TABLE debrief_reports ADD COLUMN IF NOT EXISTS day_number INTEGER`);
+    await db.query(`ALTER TABLE debrief_reports ADD COLUMN IF NOT EXISTS programme_health_score FLOAT`);
+    await db.query(`ALTER TABLE debrief_reports ADD COLUMN IF NOT EXISTS alerts_extracted JSONB`);
+    await db.query(`ALTER TABLE debrief_reports ADD COLUMN IF NOT EXISTS whatsapp_sent BOOLEAN DEFAULT FALSE`);
 
     // Add missing columns to reference_slips
     await db.query(`ALTER TABLE reference_slips ADD COLUMN IF NOT EXISTS thermal_printed BOOLEAN DEFAULT FALSE`);
